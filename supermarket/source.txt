@@ -1,2 +1,3 @@
 https://www.kaggle.com/ratnesh88/forecasting-arimax
 http://chongdata.com/articles/?p=498
+https://mp.weixin.qq.com/s?__biz=MzA3MDg0MjgxNQ==&mid=2652390079&idx=1&sn=eb49de43c14cff963826bee98a2f89c1&scene=0#wechat_redirect
