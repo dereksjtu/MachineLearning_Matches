@@ -327,8 +327,8 @@ def get_origin_feats(train, train_new, test):
     print "Commodity hot index features done."
     train_new,test = get_hol_sale_feats(train_new,test)
     print "Commodity holiday features done."
-    train_new, test = get_price_feats(train,train_new, test)
-    print "Commodity price features done."
+    # train_new, test = get_price_feats(train,train_new, test)
+    # print "Commodity price features done."
     train_new, test = get_coupon_feats(train, train_new, test)
     print "Coupon features done."
     train_new, test = get_coupon_hol_feats(train , train_new, test)
@@ -828,7 +828,7 @@ def get_roll_diff_feats(train_test):
     diff.loc[:,'dayOn14DayDiff'] = diff['last7DaysSaleCount'] - diff['last21DaysSaleCount']
 
     #开始合并
-    tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn7DayDiff','dayOn14DayDiff']],on=['Class','dayOfYear'],how='left')
+    tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff','dayOn14DayDiff']],on=['Class','dayOfYear'],how='left')
     print 'new added features:',np.setdiff1d(tmp.columns, train_test.columns)
     train_test = tmp.copy()
     return train_test
@@ -837,8 +837,8 @@ def get_roll_feats(train_test):
     print "Start extract rolling features....."
     train_test = get_roll_hot_index_feats(train_test)
     print "Roll hot index features done."
-    train_test = get_roll_price_feats(train_test)
-    print "Roll price features done."
+    # train_test = get_roll_price_feats(train_test)
+    # print "Roll price features done."
     train_test = get_roll_week_sale_feats(train_test)
     print "Roll week sale features done."
     train_test = get_roll_diff_feats(train_test)
