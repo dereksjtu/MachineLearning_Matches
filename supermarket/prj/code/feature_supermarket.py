@@ -20,6 +20,15 @@ def reshape_train(train):
     train.loc[:,'saleCount'] = 1
     coord_class = train.groupby(['Class','SaleDate'],as_index=False)['saleCount'].sum()
     coord_parClass = train.groupby(['parClass','SaleDate'],as_index=False)['saleCount'].sum()
+
+    coord_class_c = train.groupby(['Class','SaleDate'],as_index=False)['Coupon'].sum()
+    coord_parClass_c = train.groupby(['parClass','SaleDate'],as_index=False)['Coupon'].sum()
+    coord_class = pd.merge(coord_class, coord_class_c, on= ['Class','SaleDate'], how='left')
+    coord_parClass = pd.merge(coord_parClass, coord_parClass_c, on= ['parClass','SaleDate'], how='left')
+    # coord_class['Coupon'].fillna(0,inplace=True)
+    # coord_parClass['Coupon'].fillna(0,inplace=True)
+
+    # print coord_class
     coord_parClass.rename(columns = {'parClass':'Class'},inplace=True)
     train_new = pd.concat([coord_class,coord_parClass],axis = 0)
     train_new.loc[:,'parClass'] = train_new.Class.map(lambda x: str(x)[:2])
@@ -38,9 +47,12 @@ def reshape_train(train):
     tmp1.loc[:,'parClass'] = tmp1.Class.map(lambda x: str(x)[:2])
     tmp1.parClass = tmp1.parClass.astype('int')
     tmp1.saleCount = tmp1.saleCount.astype('int')
-    tmp1 = tmp1[['Class','parClass','SaleDate','saleCount']]
+    tmp1 = tmp1[['Class','parClass','SaleDate','saleCount','Coupon']]
     print 'Are count numbers equal: ', train.saleCount.sum() * 2 == tmp1.saleCount.sum()
     train_new = tmp1.copy()
+
+    train['Coupon'].fillna(0,inplace=True)
+    train_new['Coupon'].fillna(0,inplace=True)
     return train, train_new
 
 def get_hol_feats(train, train_new, test):
@@ -107,6 +119,7 @@ def  get_commodity_class(train, train_new, test):
 
     train_new.loc[:,'cumType'] = train_new.Class.map(midClassDict)
     train_new.loc[:,'parCumType'] = train_new.parClass.map(bigClassDict)
+    train_new['cumType'][train_new['cumType'].isnull()] = train_new['parCumType'][train_new['cumType'].isnull()]
 
     #最开始就需要改名
     test.rename(columns={'Code':'Class'},inplace = True)
@@ -175,11 +188,12 @@ def get_hol_sale_feats(train_new,test):
     train_new = pd.merge(train_new, coord, on = 'Class', how='left')
     test = pd.merge(test, coord, on = 'Class', how='left')
 
-    coord = train_hol.groupby('Class',as_index=False)['saleCount'].agg({'holSaleCount':'count'})
+    coord = train_hol.groupby('Class',as_index=False)['saleCount'].agg({'holSaleCount':'sum'})
     train_new = pd.merge(train_new, coord, on = 'Class', how='left')
-    coord = train_wk.groupby('Class',as_index=False)['saleCount'].agg({'wkSaleCount':'count'})
+    coord = train_wk.groupby('Class',as_index=False)['saleCount'].agg({'wkSaleCount':'sum'})
     train_new = pd.merge(train_new, coord, on = 'Class', how='left')
-    train_new.loc[:,'wkHolRatio'] = train_new['wkSaleCount'] / (1.0 * train_new['holSaleCount'])
+    train_new.loc[:,'wkHolRatio'] = train_new['wkSaleCount'] / (1.0 * (train_new['holSaleCount'] + 1))
+
 
     coord = train_new.groupby('Class',as_index=False)['wkHolRatio'].mean()
     test = pd.merge(test, coord, on = 'Class', how='left')
@@ -225,9 +239,9 @@ def get_coupon_feats(train, train_new, test):
     test['classNotBonusSaleCount'] = test['classNotBonusSaleCount'].fillna(1)
 
     # 计算促销与非促销的比值
-    train_new.loc[:,'bonusRatio'] = np.round(train_new['classBonusSaleCount'] / (1.0 * train_new['classNotBonusSaleCount']),4)
+    train_new.loc[:,'bonusRatio'] = np.round(train_new['classBonusSaleCount'] / (1.0 * (train_new['classNotBonusSaleCount'] + 1)),4)
     del train_new['classBonusSaleCount'],train_new['classNotBonusSaleCount']
-    test.loc[:,'bonusRatio'] = np.round(test['classBonusSaleCount'] / (1.0 * test['classNotBonusSaleCount']),4)
+    test.loc[:,'bonusRatio'] = np.round(test['classBonusSaleCount'] / (1.0 * (test['classNotBonusSaleCount'] + 1)),4)
     del test['classBonusSaleCount'],test['classNotBonusSaleCount']
     return train_new, test
 
@@ -256,9 +270,9 @@ def get_coupon_hol_feats(train , train_new, test):
     test['classNotBonusSaleCount'] = test['classNotBonusSaleCount'].fillna(1)
 
     # 计算促销与非促销的比值
-    train_new.loc[:,'bonusHolRatio'] = np.round(train_new['classBonusSaleCount'] / (1.0 * train_new['classNotBonusSaleCount']),4)
+    train_new.loc[:,'bonusHolRatio'] = np.round(train_new['classBonusSaleCount'] / (1.0 * (train_new['classNotBonusSaleCount'] + 1)),4)
     del train_new['classBonusSaleCount'],train_new['classNotBonusSaleCount']
-    test.loc[:,'bonusHolRatio'] = np.round(test['classBonusSaleCount'] / (1.0 * test['classNotBonusSaleCount']),4)
+    test.loc[:,'bonusHolRatio'] = np.round(test['classBonusSaleCount'] / (1.0 * (test['classNotBonusSaleCount'] + 1)),4)
     del test['classBonusSaleCount'],test['classNotBonusSaleCount']
 
     # 商品非节假日时促销销量与不促销销量的比值
@@ -281,9 +295,9 @@ def get_coupon_hol_feats(train , train_new, test):
     test['classNotBonusSaleCount'] = test['classNotBonusSaleCount'].fillna(1)
 
     # 计算促销与非促销的比值
-    train_new.loc[:,'bonusNotHolRatio'] = np.round(train_new['classBonusSaleCount'] / (1.0 * train_new['classNotBonusSaleCount']),4)
+    train_new.loc[:,'bonusNotHolRatio'] = np.round(train_new['classBonusSaleCount'] / (1.0 * (train_new['classNotBonusSaleCount'] + 1)),4)
     del train_new['classBonusSaleCount'],train_new['classNotBonusSaleCount']
-    test.loc[:,'bonusNotHolRatio'] = np.round(test['classBonusSaleCount'] / (1.0 * test['classNotBonusSaleCount']),4)
+    test.loc[:,'bonusNotHolRatio'] = np.round(test['classBonusSaleCount'] / (1.0 * (test['classNotBonusSaleCount'] + 1)),4)
     del test['classBonusSaleCount'],test['classNotBonusSaleCount']
     del train_wk,train_hol
 
@@ -295,13 +309,13 @@ def get_coupon_weekday_feats(train, train_new, test):
     coord = train_coupon.groupby(['Class','dayOfWeek'],as_index=False)['dayOfWeek'].agg({'dayOfWeekCount':'count'})
     var = train_coupon.groupby(['Class'],as_index=False)['dayOfWeek'].agg({'classCouponCount':'count'})
     coord = pd.merge(coord, var, on = 'Class',how='left' )
-    coord.loc[:,'bonusWeekProb'] = coord['dayOfWeekCount'] / np.round((1.0 * coord['classCouponCount']))
+    coord.loc[:,'bonusWeekProb'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCouponCount'] + 1)))
     coord_c = coord.copy()
 
     coord = train_coupon.groupby(['parClass','dayOfWeek'],as_index=False)['dayOfWeek'].agg({'dayOfWeekCount':'count'})
     var = train_coupon.groupby(['parClass'],as_index=False)['dayOfWeek'].agg({'classCouponCount':'count'})
     coord = pd.merge(coord, var, on = 'parClass',how='left' )
-    coord.loc[:,'bonusWeekProb'] = coord['dayOfWeekCount'] / np.round((1.0 * coord['classCouponCount']))
+    coord.loc[:,'bonusWeekProb'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCouponCount'] + 1)))
     coord.rename(columns={'parClass':'Class'},inplace=True)
     coord_pc = coord.copy()
 
