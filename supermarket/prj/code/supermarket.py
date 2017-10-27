@@ -397,6 +397,8 @@ if __name__ == "__main__":
     result_1.to_csv('result_1.csv',index=False)
 
 
+
+
     # 第二轮
     rolling_features = ['hotPast1MonthIndex','hotPast1WeekIndex', 'hotPast2WeekIndex','parHotPast1MonthIndex' ,'parHotPast1WeekIndex' ,'parHotPast2WeekIndex',
                         'day3OoverWeek3TotRatio', 'parWeekDayRatio', 'parWeekOn1WeekRatio','parWeekOn2WeekRatio' ,'weekDayRatio' ,'weekOn1WeekRatio' ,'weekOn2WeekRatio',
@@ -444,54 +446,52 @@ if __name__ == "__main__":
     # result_2['saleCount'][result_2['saleCount'] < 0 ] = 0
     result_2.to_csv('result_2.csv',index=False)
 
-    # # 第三轮
-    # rolling_features = ['hotPast1MonthIndex','hotPast1WeekIndex', 'hotPast2WeekIndex','parHotPast1MonthIndex' ,'parHotPast1WeekIndex' ,'parHotPast2WeekIndex',
-    #                     'day3OoverWeek3TotRatio', 'parWeekDayRatio', 'parWeekOn1WeekRatio','parWeekOn2WeekRatio' ,'weekDayRatio' ,'weekOn1WeekRatio' ,'weekOn2WeekRatio',
-    #                     'dayOn14DayDiff','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff'
-    #                     ]
-    # feats = [f for f in train_test.columns if f not in rolling_features]
-    # train_test = train_test[feats]
-    # test_feat_2 = test_feat_2[feats]
-    # train_test = pd.concat([train_test,test_feat_2],axis=0)
-    # train_test = merge_train_test(train_test, test_3)
-    #
-    # # 特征2： 提取滚动特征
-    # train_test = get_roll_feats(train_test)
-    #
-    # train_feat = train_test[train_test['SaleDate'] >= '2015-01-01']    #使用二月份以后的数据
-    #
-    # test_feat = train_test[train_test['SaleDate'] >= '2015-05-15']
-    # test_feat.loc[:,'saleCount'] = 0
-    # train_test = train_test[~train_test['SaleDate'].isin(test_3['SaleDate'])]
-    #
-    #
-    # train_feat.fillna(0,inplace=True)
-    # test_feat.fillna(0,inplace=True)
-    #
-    # test_feat_3 = test_feat[test_feat['SaleDate'].isin(week_5[2])]
-    # test_feat_3.fillna(0,inplace=True)
-    # test_feat_3['saleCount'] = 0
-    #
-    # feature_names = list(train_feat.columns)
-    # do_not_use_for_training = ['SaleDate','saleCount','dayOfYear','price_mean','price_median','dayOn6DayDiff','dayOn5DayDiff','dayOn7DayDiff','dayOn8DayDiff','dayOn21DayDiff',
-    #                            ]
-    # predictors = [f for f in feature_names if f not in do_not_use_for_training]
-    #
-    # params = {'min_child_weight': 100, 'eta': 0.09, 'colsample_bytree': 0.3, 'max_depth': 8,
-    #             'subsample': 0.6, 'lambda': 1., 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
-    #             'eval_metric': 'rmse', 'objective': 'reg:linear'}
-    # xgbtrain = xgb.DMatrix(train_feat[predictors], train_feat['saleCount'])
-    # xgbvalid = xgb.DMatrix(test_feat_3[predictors])
-    # model = xgb.train(params, xgbtrain, num_boost_round=100)
-    # param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
-    # print "Parameter score: "
-    # print param_score
-    # test_feat_3['saleCount'] = model.predict(xgbvalid)
-    # test_feat_3['saleCount'] = test_feat_3['saleCount'].astype('int')
-    # result_3 = test_feat_2[['Class','SaleDate','saleCount']]
-    # result_3 = pd.merge(test_3[['Class','SaleDate']], result_3, on=['Class','SaleDate'], how='left')
-    # # print result_2['Class'].value_counts()
-    # result_3.fillna(0,inplace=True)
-    # result_3['saleCount'][result_3['saleCount'] < 0 ] = 0
-    # result_3.to_csv('result_3.csv',index=False)
+
+    # 第三轮
+    rolling_features = ['hotPast1MonthIndex','hotPast1WeekIndex', 'hotPast2WeekIndex','parHotPast1MonthIndex' ,'parHotPast1WeekIndex' ,'parHotPast2WeekIndex',
+                        'day3OoverWeek3TotRatio', 'parWeekDayRatio', 'parWeekOn1WeekRatio','parWeekOn2WeekRatio' ,'weekDayRatio' ,'weekOn1WeekRatio' ,'weekOn2WeekRatio',
+                        'dayOn14DayDiff','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff'
+                        ]
+    feats = [f for f in train_test.columns if f not in rolling_features]
+    train_test = train_test[feats]
+    test_feat = test_feat[feats]
+    train_test = pd.concat([train_test,test_feat],axis=0)
+    train_test = merge_train_test(train_test, test_3)
+
+    # 特征2： 提取滚动特征
+    train_test = get_roll_feats(train_test)
+
+    train_feat = train_test[train_test['SaleDate'] >= '2015-01-01']    #使用二月份以后的数据
+
+    test_feat = train_test[train_test['SaleDate'].isin(week_5[2])]
+    test_feat.loc[:,'saleCount'] = 0
+    train_test = train_test[~train_test['SaleDate'].isin(test_3['SaleDate'])]
+
+
+    train_feat.fillna(0,inplace=True)
+    test_feat.fillna(0,inplace=True)
+
+    feature_names = list(train_feat.columns)
+    do_not_use_for_training = ['SaleDate','saleCount','dayOfYear','price_mean','price_median','dayOn6DayDiff','dayOn5DayDiff','dayOn7DayDiff','dayOn8DayDiff','dayOn21DayDiff',
+                               ]
+    predictors = [f for f in feature_names if f not in do_not_use_for_training]
+
+    params = {'min_child_weight': 100, 'eta': 0.09, 'colsample_bytree': 0.3, 'max_depth': 8,
+                'subsample': 0.6, 'lambda': 1., 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
+                'eval_metric': 'rmse', 'objective': 'reg:linear'}
+    xgbtrain = xgb.DMatrix(train_feat[predictors], train_feat['saleCount'])
+    xgbvalid = xgb.DMatrix(test_feat[predictors])
+    model = xgb.train(params, xgbtrain, num_boost_round=100)
+    param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
+    print "Parameter score: "
+    print param_score
+    test_feat['saleCount'] = model.predict(xgbvalid)
+    test_feat['saleCount'] = test_feat['saleCount'].astype('int')
+    result_3 = test_feat[['Class','SaleDate','saleCount']]
+    result_3 = pd.merge(test_3[['Class','SaleDate']], result_3, on=['Class','SaleDate'], how='left')
+    # print result_2['Class'].value_counts()
+    result_3.fillna(0,inplace=True)
+    # result_2['saleCount'][result_2['saleCount'] < 0 ] = 0
+    result_3.to_csv('result_3.csv',index=False)
+
     ### 提交训练结果
