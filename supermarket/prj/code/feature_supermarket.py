@@ -641,12 +641,12 @@ def get_roll_price_feats(train_test):
     tmp = pd.merge(train_test,lastWeekSaleCount_mean,on=['Class','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,last2WeekSaleCount_mean,on=['Class','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,lastMonthSaleCount_mean,on=['Class','month'],how='left')
-    # tmp = pd.merge(tmp,lastWeekSaleCount_median,on=['Class','weekOfYear'],how='left')
+    tmp = pd.merge(tmp,lastWeekSaleCount_median,on=['Class','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,last2WeekSaleCount_median,on=['Class','weekOfYear'],how='left')
-    # tmp = pd.merge(tmp,lastMonthSaleCount_median,on=['Class','month'],how='left')
+    tmp = pd.merge(tmp,lastMonthSaleCount_median,on=['Class','month'],how='left')
 
     tmp = pd.merge(tmp,lastWeekSaleCount_std,on=['Class','weekOfYear'],how='left')
-    tmp = pd.merge(tmp,last2WeekSaleCount_std,on=['Class','weekOfYear'],how='left')
+    # tmp = pd.merge(tmp,last2WeekSaleCount_std,on=['Class','weekOfYear'],how='left')
     tmp = pd.merge(tmp,lastMonthSaleCount_std,on=['Class','month'],how='left')
 
     # tmp = pd.merge(tmp,parLastWeekSaleCount_mean,on=['parClass','weekOfYear'],how='left')
@@ -656,8 +656,8 @@ def get_roll_price_feats(train_test):
     # tmp = pd.merge(tmp,parLast2WeekSaleCount_median,on=['parClass','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,parLastMonthSaleCount_median,on=['parClass','month'],how='left')
 
-    tmp = pd.merge(tmp,parLastWeekSaleCount_std,on=['parClass','weekOfYear'],how='left')
-    tmp = pd.merge(tmp,parLast2WeekSaleCount_std,on=['parClass','weekOfYear'],how='left')
+    # tmp = pd.merge(tmp,parLastWeekSaleCount_std,on=['parClass','weekOfYear'],how='left')
+    # tmp = pd.merge(tmp,parLast2WeekSaleCount_std,on=['parClass','weekOfYear'],how='left')
     tmp = pd.merge(tmp,parLastMonthSaleCount_std,on=['parClass','month'],how='left')
 
     # print 'new added features:',np.setdiff1d(tmp.columns, train_test.columns)
@@ -916,8 +916,8 @@ def get_roll_feats(train_test):
     print "Start extract rolling features....."
     train_test = get_roll_hot_index_feats(train_test)
     print "Roll hot index features done."
-    # train_test = get_roll_price_feats(train_test)
-    # print "Roll price features done."
+    train_test = get_roll_price_feats(train_test)
+    print "Roll price features done."
     train_test = get_roll_week_sale_feats(train_test)
     print "Roll week sale features done."
     train_test = get_roll_diff_feats(train_test)
