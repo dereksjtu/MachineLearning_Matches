@@ -54,7 +54,7 @@ if __name__ == "__main__":
                 ['2015-04-01','2015-04-02','2015-04-03','2015-04-04','2015-04-05','2015-04-06','2015-04-07'],
                 ['2015-04-08','2015-04-09','2015-04-10','2015-04-11','2015-04-12','2015-04-13','2015-04-14'],
                 ['2015-04-15','2015-04-16','2015-04-17','2015-04-18','2015-04-19','2015-04-20','2015-04-21'],
-                ['2015-04-22','2015-04-23','2015-04-24','2015-04-25','2015-04-26'],
+                ['2015-04-22','2015-04-23','2015-04-24','2015-04-25','2015-04-26','2015-04-27','2015-04-28'],
                 ['2015-04-29','2015-04-30']
 
                 # ['2015-04-01','2015-04-02','2015-04-03','2015-04-04'],
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     # test_valid_1,test_valid_2,test_valid_3,test_valid_4,test_valid_5, test_valid = valid_split(train_new_o, week_4, month_4)
     test_valid = valid_split(train_new_o, week_4, month_4)
     #验证集取4月1号到4月28号
-    test_valid = test_valid[test_valid['SaleDate'] < '2015-04-27']
+    # test_valid = test_valid[test_valid['SaleDate'] < '2015-04-27']
     # 特征2： 提取滚动特征
     train_test = merge_train_test(train_new, test_1)
     train_test,l_roll_feats = get_roll_feats(train_test)
@@ -222,8 +222,8 @@ if __name__ == "__main__":
 
     # 第二轮
     # 特征2： 提取滚动特征
-    # 4月2号 - 4月28号
-    for i in range(1,4):
+    # 4月2号 - 4月30号
+    for i in range(1,5):
         # l_roll_feats = []
         train_test = train_test[train_test['SaleDate'] < '2015-04-01']
         train_test = merge_train_test(train_test, test_feat_1)
