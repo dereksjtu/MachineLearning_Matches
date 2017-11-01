@@ -149,9 +149,9 @@ if __name__ == "__main__":
     test.loc[:,'saleCount'] = 0
 
     # 特征1： 提取固定特征
+    train_new = exclude_abnormal_value(train_new)
     train, train_new, test = get_origin_feats(train, train_new, test)
-    # train_new = exclude_abnormal_value(train_new)
-    print 'Filter abnormal value.'
+    # print 'Filter abnormal value.'
 
 
     # # 分离测试集
@@ -187,9 +187,16 @@ if __name__ == "__main__":
                                'dayOn21DayDiff',
                                'lastWeekSaleCount_mean',
                                'expweighted_14_avg','trend_7',
+                               'wkDaySaleCount_max','wkHolRatio_max','wkDaySaleCount_mean','holDaySaleCount_mean','holDaySaleCount_max','holDaySaleCount_median','wkDaySaleCount_median',
+                               'wkHolRatio_median','wkDaySaleCount_pv','holDaySaleCount_std','bonusRatio_median','bonusRatio_mean','bonusRatio_max','wkDaySaleCount_std',
+
+                               # 'weekOfYear',
+                               # 'parClass','parHotIndex','parCumType','bonusHolRatio','month','holidayCluster','holDaySaleCount_max','bonusRatio','hotIndex','Class'
                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
                                ]
     predictors = [f for f in feature_names if f not in do_not_use_for_training]
+    # do_use_for_training = ['hotPast1WeekIndex','weekOfYear','expweighted_7_avg','trend_14','bonusWeekProb','hotPast1MonthIndex','dayOfWeek','disHoliday','hotPast2WeekIndex','cumType','month']
+    # predictors = [f for f in feature_names if f in do_use_for_training]
 
     params = {'min_child_weight': 100, 'eta': 0.09, 'colsample_bytree': 0.3, 'max_depth': 8,
                 'subsample': 0.85, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
@@ -204,11 +211,11 @@ if __name__ == "__main__":
     print param_score, len(predictors)
     test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
     result = test_feat_1[['Class','SaleDate','saleCount']]
-    result.fillna(0,inplace=True)
     test_valid_1 = test_valid[test_valid['SaleDate'].isin(week_4[0])]
     test_valid_1.fillna(0,inplace=True)
     result = pd.merge(test_valid_1[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
     # result['saleCount'][result['saleCount'] < 0] = 0
+    result.fillna(0,inplace=True)
     score_1 = score(result['saleCount'],test_valid_1['saleCount'])
     print "the 1th day predictive score:{}".format(score_1)
 
@@ -265,11 +272,11 @@ if __name__ == "__main__":
         test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
         result_i = test_feat_1[['Class','SaleDate','saleCount']]
         print len(result_i['saleCount'])
-        result_i.fillna(0,inplace=True)
         test_valid_i = test_valid[test_valid['SaleDate'].isin(week_4[i])]
         test_valid_i.fillna(0,inplace=True)
         result_i = pd.merge(test_valid_i[['Class','SaleDate']], result_i, on=['Class','SaleDate'], how='left')
         print week_4[i]
+        result_i.fillna(0,inplace=True)
         # result['saleCount'][result['saleCount'] < 0] = 0
         # print result
         score_i = score(test_valid_i['saleCount'],result_i['saleCount'])
@@ -278,8 +285,10 @@ if __name__ == "__main__":
 
 result = pd.merge(test_valid[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
 result['saleCount'][result['saleCount'] < 0] = 0
-result.to_csv('result.csv',index=False)
-test_valid.to_csv('test_valid.csv',index=False)
+result.to_csv('result_c.csv',index=False)
+test_valid.to_csv('test_valid_c.csv',index=False)
+# result.to_csv('result_nc.csv',index=False)
+# test_valid.to_csv('test_valid_nc.csv',index=False)
 score = score(test_valid['saleCount'],result['saleCount'])
 # ser_score = pd.Series([score(test_valid['saleCount'][test_valid['Class'] == i],result['saleCount'][result['Class'] == i]) for i in result.columns],index=result.columns)
 
