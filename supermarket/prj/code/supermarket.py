@@ -149,7 +149,7 @@ if __name__ == "__main__":
     test.loc[:,'saleCount'] = 0
 
     # 特征1： 提取固定特征
-    train_new = exclude_abnormal_value(train_new)
+    # train_new = exclude_abnormal_value(train_new)
     train, train_new, test = get_origin_feats(train, train_new, test)
     # print 'Filter abnormal value.'
 
@@ -188,7 +188,8 @@ if __name__ == "__main__":
                                'lastWeekSaleCount_mean',
                                'expweighted_14_avg','trend_7',
                                'wkDaySaleCount_max','wkHolRatio_max','wkDaySaleCount_mean','holDaySaleCount_mean','holDaySaleCount_max','holDaySaleCount_median','wkDaySaleCount_median',
-                               'wkHolRatio_median','wkDaySaleCount_pv','holDaySaleCount_std','bonusRatio_median','bonusRatio_mean','bonusRatio_max','wkDaySaleCount_std',
+                               'wkHolRatio_median','wkDaySaleCount_pv','holDaySaleCount_std','bonusRatio_median','bonusRatio_mean','bonusRatio_max','wkDaySaleCount_std','holDaySaleCount_pv','holDaySaleCount_ct',
+                               'wkDaySaleCount_ct',
 
                                # 'weekOfYear',
                                # 'parClass','parHotIndex','parCumType','bonusHolRatio','month','holidayCluster','holDaySaleCount_max','bonusRatio','hotIndex','Class'

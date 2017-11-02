@@ -1017,7 +1017,8 @@ def get_roll_diff_feats(train_test):
     diff.loc[:,'dayOn14DayDiff'] = diff['last7DaysSaleCount'] - diff['last21DaysSaleCount']
 
     #开始合并
-    tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff','dayOn14DayDiff','last3Days_mean','last6Days_mean','last3InterDays_mean']],on=['Class','dayOfYear'],how='left')
+    # tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff','dayOn14DayDiff','last3Days_mean','last6Days_mean','last3InterDays_mean']],on=['Class','dayOfYear'],how='left')
+    tmp = pd.merge(train_test,diff[['Class','dayOfYear']],on=['Class','dayOfYear'],how='left')
     # print 'new added features:',np.setdiff1d(tmp.columns, train_test.columns)
     train_test = tmp.copy()
     return train_test
