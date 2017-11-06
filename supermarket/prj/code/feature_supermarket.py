@@ -392,7 +392,7 @@ def get_origin_feats(train, train_new, test):
     # train_new, test = get_coupon_hol_feats(train , train_new, test)
     # print "Coupon holiday features done."
     # train_new, test = get_coupon_weekday_feats(train, train_new, test)
-    # print "Coupon weekday features done."
+    print "Coupon weekday features done."
     print "Commodity original features done."
     return train, train_new, test
 
@@ -984,9 +984,9 @@ def get_roll_diff_feats(train_test):
 def get_trend(train_test):
     from statsmodels.tsa.seasonal import seasonal_decompose
     do_not_use_class = [1507,3208,3311,3413]
-    train_test.loc[:,'trend_14'] = 0
-    train_test.loc[:,'expweighted_14_avg'] = 0
-    train_test.loc[:,'moving_14_avg'] = 0
+    train_test.loc[:,'trend_30'] = 0
+    train_test.loc[:,'expweighted_30_avg'] = 0
+    # train_test.loc[:,'moving_30_avg'] = 0
     step = 30
     l = train_test['Class'].unique()
     l = [f for f in l if f not in do_not_use_class]
@@ -996,25 +996,25 @@ def get_trend(train_test):
         # print i
         decomposition = seasonal_decompose(var,freq = step)
         expweighted_avg = pd.ewma(var,halflife= step)
-        moving_avg = pd.rolling_mean(var,step)
+        # moving_avg = pd.rolling_mean(var,step)
         trend = decomposition.trend
-        train_test['trend_14'][train_test['Class'] == i] = trend
-        train_test['expweighted_14_avg'][train_test['Class'] == i] = expweighted_avg
-        train_test['moving_14_avg'][train_test['Class'] == i] = moving_avg
-    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_14'].mean()
-    # coord_shift = coord.shift(step)
-    # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    # del train_test['trend_14']
-    # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    # train_test['trend_14'].fillna(0,inplace=True)
-    #
-    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_14_avg'].mean()
-    # coord_shift = coord.shift(step)
-    # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    # del train_test['expweighted_14_avg']
-    # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    # train_test['expweighted_14_avg'].fillna(0,inplace=True)
-    #
+        train_test['trend_30'][train_test['Class'] == i] = trend
+        train_test['expweighted_30_avg'][train_test['Class'] == i] = expweighted_avg
+        # train_test['moving_30_avg'][train_test['Class'] == i] = moving_avg
+    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_30'].mean()
+    coord_shift = coord.shift(step)
+    coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
+    del train_test['trend_30']
+    train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
+    train_test['trend_30'].fillna(0,inplace=True)
+
+    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_30_avg'].mean()
+    coord_shift = coord.shift(step)
+    coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
+    del train_test['expweighted_30_avg']
+    train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
+    train_test['expweighted_30_avg'].fillna(0,inplace=True)
+
     # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['moving_14_avg'].mean()
     # coord_shift = coord.shift(step)
     # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
@@ -1024,18 +1024,18 @@ def get_trend(train_test):
 
     # train_test.loc[:,'trend_7'] = 0
     # train_test.loc[:,'expweighted_7_avg'] = 0
-    # train_test.loc[:,'moving_7_avg'] = 0
+    # # train_test.loc[:,'moving_7_avg'] = 0
     # step = 7
     # for i in train_test['Class'].unique():
     #     var = train_test[train_test['Class'] == i]['saleCount']
     #     var = var.values
     #     decomposition = seasonal_decompose(var,freq = step)
     #     expweighted_avg = pd.ewma(var,halflife=step)
-    #     moving_avg = pd.rolling_std(var,step)
+    #     # moving_avg = pd.rolling_std(var,step)
     #     trend = decomposition.trend
     #     train_test['trend_7'][train_test['Class'] == i] = trend
     #     train_test['expweighted_7_avg'][train_test['Class'] == i] = expweighted_avg
-    #     train_test['moving_7_avg'][train_test['Class'] == i] = moving_avg
+    #     # train_test['moving_7_avg'][train_test['Class'] == i] = moving_avg
     # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_7'].mean()
     # coord_shift = coord.shift(step)
     # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
@@ -1049,7 +1049,7 @@ def get_trend(train_test):
     # del train_test['expweighted_7_avg']
     # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
     # train_test['expweighted_7_avg'].fillna(0,inplace=True)
-    #
+
     # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['moving_7_avg'].mean()
     # coord_shift = coord.shift(step)
     # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]

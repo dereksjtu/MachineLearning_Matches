@@ -168,10 +168,6 @@ if __name__ == "__main__":
 #     train_new_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
 #     train, train_new, test = get_origin_feats(train, train_new, test)
 #
-#     # holiday = pd.read_csv(hol_path)
-#     # train_new_o = pd.merge(train_new_o, holiday, on = 'SaleDate',how = 'left')
-#     # train_new_o.to_csv('train_new_total_1.csv',index=False)
-#
 #
 #     # # 分离测试集
 #     start_date = '2015-01-01'
@@ -181,7 +177,6 @@ if __name__ == "__main__":
 #     # test_valid_1,test_valid_2,test_valid_3,test_valid_4,test_valid_5, test_valid = valid_split(train_new_o, week_4, month_4)
 #     test_valid = valid_split(train_new_o, week_4, month_4)
 #     #验证集取4月1号到4月28号
-#     # test_valid = test_valid[test_valid['SaleDate'] < '2015-04-27']
 #     # 特征2： 提取滚动特征
 #     train_test = merge_train_test(train_new, test_1)
 #     train_test,l_roll_feats = get_roll_feats(train_test)
@@ -213,8 +208,14 @@ if __name__ == "__main__":
 #                                # 'parHotPast1MonthIndex',
 #                                # 'dayOn21DayDiff',
 #                                'lastWeekSaleCount_mean',
-#                                'expweighted_14_avg','trend_7',
-#                                # 'disholDaySaleCount_mean','disholDaySaleCount_max'
+#                                # 'expweighted_14_avg',
+#                                'trend_7','expweighted_7_avg',
+#                                'classWeekdayRatio',
+#                                'moving_30_avg','expweighted_30_avg',
+#                                # 'disholDaySaleCount_mean',
+#                                'disholDaySaleCount_max',
+#                                # 'holDaySaleCount_min',
+#                                # 'holDaySaleCount_median',
 #                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
 #                                ]
 #     predictors = [f for f in feature_names if f not in do_not_use_for_training]
@@ -238,10 +239,6 @@ if __name__ == "__main__":
 #     result = pd.merge(test_valid_1[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
 #     # result['saleCount'][result['saleCount'] < 0] = 0
 #     result.fillna(0,inplace=True)
-#     # result['saleCount'][result['Class'] == 12] = result['saleCount'][result['Class'] == 1201]+ result['saleCount'][result['Class'] == 1202] + result['saleCount'][result['Class'] == 1203] + result['saleCount'][result['Class'] == 1205]
-#     # result['saleCount'][result['Class'] == 12] = 0
-#     # print result['saleCount'][result['Class'] == 12]
-#     # result.to_csv('result_tmp.csv')
 #
 #     score_1 = score(result['saleCount'],test_valid_1['saleCount'])
 #     print "the 1th day predictive score:{}".format(score_1)
@@ -286,18 +283,14 @@ if __name__ == "__main__":
 #         #                            ]
 #         predictors = [f for f in feature_names if f not in do_not_use_for_training]
 #
-#         params = {'min_child_weight': 100, 'eta': 0.09, 'colsample_bytree': 0.3, 'max_depth': 7,
-#                 'subsample': 0.85, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
-#                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
+#         # params = {'min_child_weight': 100, 'eta': 0.09, 'colsample_bytree': 0.3, 'max_depth': 7,
+#         #         'subsample': 0.85, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
+#         #         'eval_metric': 'rmse', 'objective': 'reg:linear'}
 #
 #         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
 #         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
 #         model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
-#         # param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
 #
-#
-#         # print "Parameter score: "
-#         # print param_score
 #         test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
 #         result_i = test_feat_1[['Class','SaleDate','saleCount']]
 #         # result_i['saleCount'] = 1.2 *  result_i['saleCount']
@@ -308,8 +301,6 @@ if __name__ == "__main__":
 #         print week_4[i]
 #         # result['saleCount'][result['saleCount'] < 0] = 0
 #         result_i.fillna(0,inplace=True)
-#         # result_i[result_i['Class'] == 12]['saleCount'] = result_i[result_i['Class'] == 1201]['saleCount'] + result_i[result_i['Class'] == 1202]['saleCount'] + result_i[result_i['Class'] == 1203]['saleCount'] + result_i[result_i['Class'] == 1205]['saleCount']
-#         # print result
 #         score_i = score(test_valid_i['saleCount'],result_i['saleCount'])
 #         result = pd.concat([result, result_i], axis=0)
 #         print "the {}th day predictive score:{}".format(i + 1,score_i)
@@ -317,28 +308,25 @@ if __name__ == "__main__":
 # result = pd.merge(test_valid[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
 # result['saleCount'][result['saleCount'] < 0] = 0
 #
-# #----------------- reorgonize result ----------------
-# # result[result['Class'] == 12]['saleCount'] = result[result['Class'] == 1201]['saleCount'] + result[result['Class'] == 1202]['saleCount'] + result[result['Class'] == 1203]['saleCount'] + result[result['Class'] == 1205]['saleCount']
-# #----------------- reorgonize result ----------------
 #
 # result.to_csv('result.csv',index=False)
 # test_valid.to_csv('test_valid.csv',index=False)
-# score = score(test_valid['saleCount'],result['saleCount'])
-# # ser_score = pd.Series([score(test_valid['saleCount'][test_valid['Class'] == i],result['saleCount'][result['Class'] == i]) for i in result.columns],index=result.columns)
-#
-# # # for further analyse
-# # l_index = []
-# # l_score = []
-# # for i in test_valid['Class'].unique():
-# #     score_1 = score(test_valid['saleCount'][test_valid['Class'] == i] ,result['saleCount'][result['Class'] == i])
-# #     l_index.append(i)
-# #     l_score.append(score_1)
-# # ser_score = pd.Series(l_score, index=l_index)
-# # ser_score.to_csv('ser_score.csv',index=False)
+# score_f = score(test_valid['saleCount'],result['saleCount'])
 #
 # print "Elapse time is {} minutes".format((time.time() - t0) / (1.0 * 60))
-# print "Total predictive score:{}".format(score)
-
+# print "Total predictive score:{}".format(score_f)
+#
+# # ser_score = pd.Series([score(test_valid['saleCount'][test_valid['Class'] == i],result['saleCount'][result['Class'] == i]) for i in result.columns],index=result.columns)
+#
+# # for further analyse
+# l_index = []
+# l_score = []
+# for i in test_valid['Class'].unique():
+#     score_1 = score(test_valid['saleCount'][test_valid['Class'] == i] ,result['saleCount'][result['Class'] == i])
+#     l_index.append(i)
+#     l_score.append(score_1)
+# ser_score = pd.Series(l_score, index=l_index)
+# ser_score.to_csv('ser_score.csv')
 
 
 
@@ -389,10 +377,18 @@ if __name__ == "__main__":
     feature_names = list(train_feat_1.columns)
     do_not_use_for_training = ['SaleDate','saleCount','Coupon',
                                'dayOfYear','price_mean','price_median',
+                               # 'parCumtype','parClass',
                                # 'parHotPast1MonthIndex',
-                               'dayOn21DayDiff',
+                               # 'dayOn21DayDiff',
                                'lastWeekSaleCount_mean',
-                               'expweighted_14_avg','trend_7',
+                               # 'expweighted_14_avg',
+                               'trend_7','expweighted_7_avg',
+                               'classWeekdayRatio',
+                               'moving_30_avg','expweighted_30_avg',
+                               # 'disholDaySaleCount_mean',
+                               'disholDaySaleCount_max',
+                               # 'holDaySaleCount_min',
+                               # 'holDaySaleCount_median',
                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
                                ]
     predictors = [f for f in feature_names if f not in do_not_use_for_training]
