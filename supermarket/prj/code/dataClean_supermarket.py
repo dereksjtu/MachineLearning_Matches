@@ -60,8 +60,7 @@ def exclude_class(train_new_o, train_o, do_not_use_class):
 #     return train
 
 def exclude_abnormal_value(train):
-    # best 2 mean 1.5 std
-    step = 14   # past one week
+    step = 14   # past two week
     train.loc[:,'count'] = range(0,train.shape[0])
     train['count'] = train['count'] % (train[train['Class'] == 12].shape[0])
     train['count'] = (train['count'] / step).astype('int')

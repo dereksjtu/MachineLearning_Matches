@@ -214,6 +214,7 @@ if __name__ == "__main__":
                                'moving_30_avg','expweighted_30_avg',
                                # 'disholDaySaleCount_mean',
                                'disholDaySaleCount_max',
+                               'last2WeekSaleCount_max','last3WeekSaleCount_max'
                                # 'holDaySaleCount_min',
                                # 'holDaySaleCount_median',
                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
@@ -237,7 +238,7 @@ if __name__ == "__main__":
     test_valid_1 = test_valid[test_valid['SaleDate'].isin(week_4[0])]
     test_valid_1.fillna(0,inplace=True)
     result = pd.merge(test_valid_1[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
-    # result['saleCount'][result['saleCount'] < 0] = 0
+    result['saleCount'][result['saleCount'] < 0] = 0
     result.fillna(0,inplace=True)
 
     score_1 = score(result['saleCount'],test_valid_1['saleCount'])
@@ -278,14 +279,8 @@ if __name__ == "__main__":
         test_feat_1.fillna(0,inplace=True)
         test_feat_1.loc[:,'saleCount'] = 0
         feature_names = list(train_feat_1.columns)
-        # do_not_use_for_training = ['SaleDate','saleCount','Coupon',
-        #                            'dayOfYear','price_mean','price_median'
-        #                            ]
         predictors = [f for f in feature_names if f not in do_not_use_for_training]
 
-        # params = {'min_child_weight': 100, 'eta': 0.09, 'colsample_bytree': 0.3, 'max_depth': 7,
-        #         'subsample': 0.85, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
-        #         'eval_metric': 'rmse', 'objective': 'reg:linear'}
 
         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
@@ -299,7 +294,7 @@ if __name__ == "__main__":
         test_valid_i.fillna(0,inplace=True)
         result_i = pd.merge(test_valid_i[['Class','SaleDate']], result_i, on=['Class','SaleDate'], how='left')
         print week_4[i]
-        # result['saleCount'][result['saleCount'] < 0] = 0
+        result['saleCount'][result['saleCount'] < 0] = 0
         result_i.fillna(0,inplace=True)
         score_i = score(test_valid_i['saleCount'],result_i['saleCount'])
         result = pd.concat([result, result_i], axis=0)
