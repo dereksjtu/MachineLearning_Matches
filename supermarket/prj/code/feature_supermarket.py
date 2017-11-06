@@ -200,6 +200,34 @@ def get_weekday_ratio_feats(train_new,test):
     coord.loc[:,'parclassWeekdayRatio_median'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
     train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_median']], on = ['parClass','dayOfWeek'], how='left' )
     test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_median']], on = ['parClass','dayOfWeek'], how='left' )
+
+    coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'max'})
+    var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'max'})
+    coord = pd.merge(coord, var, on = 'Class',how='left' )
+    coord.loc[:,'classWeekdayRatio_max'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio_max']], on = ['Class','dayOfWeek'], how='left' )
+    test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio_max']], on = ['Class','dayOfWeek'], how='left' )
+
+    coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'max'})
+    var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'max'})
+    coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    coord.loc[:,'parclassWeekdayRatio_max'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_max']], on = ['parClass','dayOfWeek'], how='left' )
+    test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_max']], on = ['parClass','dayOfWeek'], how='left' )
+
+    coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'std'})
+    var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'std'})
+    coord = pd.merge(coord, var, on = 'Class',how='left' )
+    coord.loc[:,'classWeekdayRatio_std'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio_std']], on = ['Class','dayOfWeek'], how='left' )
+    test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio_std']], on = ['Class','dayOfWeek'], how='left' )
+
+    coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'std'})
+    var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'std'})
+    coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    coord.loc[:,'parclassWeekdayRatio_std'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_std']], on = ['parClass','dayOfWeek'], how='left' )
+    test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_std']], on = ['parClass','dayOfWeek'], how='left' )
     return train_new,test
 
 def get_hol_sale_feats(train_new,test):
