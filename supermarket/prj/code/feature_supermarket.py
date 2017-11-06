@@ -195,13 +195,13 @@ def get_hol_sale_feats(train_new,test):
     # test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
 
 
-    # coord = train_new[train_new['disHoliday_detail'] == 0].groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_0_mean':'mean'})
-    # coord.fillna(0.01,inplace=True)
-    # train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
-    # test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
-    # train_new.loc[:,'diswkHolRatio'] = train_new['disholDaySaleCount_mean'] / train_new['disholDaySaleCount_0_mean']
-    # test.loc[:,'diswkHolRatio'] = test['disholDaySaleCount_mean'] / test['disholDaySaleCount_0_mean']
-    # del train_new['disholDaySaleCount_0_mean'],test['disholDaySaleCount_0_mean']
+    coord = train_new[train_new['disHoliday_detail'] == 0].groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_0_mean':'mean'})
+    coord.fillna(0.01,inplace=True)
+    train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+    train_new.loc[:,'diswkHolRatio'] = train_new['disholDaySaleCount_mean'] / train_new['disholDaySaleCount_0_mean']
+    test.loc[:,'diswkHolRatio'] = test['disholDaySaleCount_mean'] / test['disholDaySaleCount_0_mean']
+    del train_new['disholDaySaleCount_0_mean'],test['disholDaySaleCount_0_mean']
 
     coord = train_wk.groupby('Class',as_index = False)['saleCount'].agg({'wkDaySaleCount_median':'median'})
     train_new = pd.merge(train_new, coord, on = 'Class', how='left')
@@ -850,7 +850,7 @@ def get_roll_week_sale_feats(train_test):
     # weekOnWeekRatio # Class,dayOfYear
     # parLastWeekDayTotSaleCount #parClass month dayOfWeek
     # parWeekOnWeekRatio
-    day3OoverWeek3Tot #Class weekOfYear
+    # day3OoverWeek3Tot #Class weekOfYear
     #开始合并
     # 合并 train_test
     del lastWeekDayTotSaleCount['lastWeekDayTotSaleCount' ],lastWeekDayTotSaleCount['lastMonthTotSaleCount' ]
@@ -1024,7 +1024,7 @@ def get_trend(train_test):
 
     # train_test.loc[:,'trend_7'] = 0
     # train_test.loc[:,'expweighted_7_avg'] = 0
-    # # train_test.loc[:,'moving_7_avg'] = 0
+    # train_test.loc[:,'moving_7_avg'] = 0
     # step = 7
     # for i in train_test['Class'].unique():
     #     var = train_test[train_test['Class'] == i]['saleCount']
@@ -1035,7 +1035,7 @@ def get_trend(train_test):
     #     trend = decomposition.trend
     #     train_test['trend_7'][train_test['Class'] == i] = trend
     #     train_test['expweighted_7_avg'][train_test['Class'] == i] = expweighted_avg
-    #     # train_test['moving_7_avg'][train_test['Class'] == i] = moving_avg
+    #     train_test['moving_7_avg'][train_test['Class'] == i] = moving_avg
     # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_7'].mean()
     # coord_shift = coord.shift(step)
     # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
