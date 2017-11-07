@@ -181,6 +181,11 @@ if __name__ == "__main__":
     train_test = merge_train_test(train_new, test_1)
     train_test,l_roll_feats = get_roll_feats(train_test)
 
+<<<<<<< HEAD
+=======
+    # train_test = pd.get_dummies(train_test,columns=['month','Class','parClass','day'])
+
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 
     train_feat = train_test[train_test['SaleDate'] >= start_date]    #使用二月份以后的数据
     train_feat_1 = train_feat[train_feat['SaleDate'] < '2015-04-01']   #训练集为2-3月份
@@ -194,6 +199,10 @@ if __name__ == "__main__":
     test_feat.loc[:,'saleCount'] = 0
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
     train_feat_1.fillna(0,inplace=True)
     test_feat.fillna(0,inplace=True)
 
@@ -209,17 +218,31 @@ if __name__ == "__main__":
                                # 'dayOn21DayDiff',
                                'lastWeekSaleCount_mean',
                                # 'expweighted_14_avg',
+<<<<<<< HEAD
                                'trend_7','expweighted_7_avg',
                                # 'classWeekdayRatio',
+=======
+                               'trend_7',
+                               # 'expweighted_7_avg',
+                               'classWeekdayRatio',
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
                                # 'parClassWeekdayRatio',
                                'moving_30_avg','expweighted_30_avg',
                                # 'disholDaySaleCount_mean',
                                'disholDaySaleCount_max',
+<<<<<<< HEAD
                                'last2WeekSaleCount_max','last3WeekSaleCount_max'
+=======
+                               'last2WeekSaleCount_max','last3WeekSaleCount_max',
+                               'Class',
+                               # 'parClass',
+                               # 'holDaySaleCount_min',
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
                                # 'holDaySaleCount_min',
                                # 'holDaySaleCount_median',
                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
                                ]
+<<<<<<< HEAD
     predictors = [f for f in feature_names if f not in do_not_use_for_training]
 
     params = {'min_child_weight': 100, 'eta': 0.05, 'colsample_bytree': 0.3, 'max_depth': 7,
@@ -227,6 +250,19 @@ if __name__ == "__main__":
                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
     boostRound = 120
 
+=======
+
+
+    predictors = [f for f in feature_names if f not in do_not_use_for_training]
+
+    params = {'min_child_weight': 100, 'eta': 0.05, 'colsample_bytree': 0.3, 'max_depth': 7,
+                'subsample': 0.8, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
+                'eval_metric': 'rmse', 'objective': 'reg:linear'}
+    boostRound = 120
+
+    # print train_feat_1[predictors]
+
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
     xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
     xgbvalid = xgb.DMatrix(test_feat_1[predictors])
     model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
@@ -235,13 +271,19 @@ if __name__ == "__main__":
     print param_score, len(predictors)
     test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
     result = test_feat_1[['Class','SaleDate','saleCount']]
+<<<<<<< HEAD
     # result['saleCount'] = 1.3 *  result['saleCount']
+=======
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
     test_valid_1 = test_valid[test_valid['SaleDate'].isin(week_4[0])]
     test_valid_1.fillna(0,inplace=True)
     result = pd.merge(test_valid_1[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
     result['saleCount'][result['saleCount'] < 0] = 0
     result.fillna(0,inplace=True)
+<<<<<<< HEAD
 
+=======
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
     score_1 = score(result['saleCount'],test_valid_1['saleCount'])
     print "the 1th day predictive score:{}".format(score_1)
 
@@ -279,13 +321,22 @@ if __name__ == "__main__":
         # print test_feat_1['SaleDate']
         test_feat_1.fillna(0,inplace=True)
         test_feat_1.loc[:,'saleCount'] = 0
+<<<<<<< HEAD
         feature_names = list(train_feat_1.columns)
         predictors = [f for f in feature_names if f not in do_not_use_for_training]
+=======
+        # feature_names = list(train_feat_1.columns)
+        # predictors = [f for f in feature_names if f not in do_not_use_for_training]
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 
 
         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
+<<<<<<< HEAD
         model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+=======
+        # model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 
         test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
         result_i = test_feat_1[['Class','SaleDate','saleCount']]
@@ -304,7 +355,11 @@ if __name__ == "__main__":
 result = pd.merge(test_valid[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
 result['saleCount'][result['saleCount'] < 0] = 0
 
+<<<<<<< HEAD
 
+=======
+print result['saleCount']
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 result.to_csv('result.csv',index=False)
 test_valid.to_csv('test_valid.csv',index=False)
 score_f = score(test_valid['saleCount'],result['saleCount'])
@@ -335,12 +390,21 @@ print "Total predictive score:{}".format(score_f)
 #     test_o = pd.read_csv(test_path)
 #     train_o,train_new_o = reshape_train(train_o)
 #     # test_o, train_new_o = exclude_class(train_new_o, test_o, do_not_use_class)
+<<<<<<< HEAD
 #
 #     # train_new_o.SaleDate = train_new_o.SaleDate.map(lambda x: timeHandle(x))
 #     # train_new_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
 #     # test_o.SaleDate = test_o.SaleDate.map(lambda x: timeHandle(x))
 #     # test_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
 #
+=======
+#
+#     # train_new_o.SaleDate = train_new_o.SaleDate.map(lambda x: timeHandle(x))
+#     # train_new_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
+#     # test_o.SaleDate = test_o.SaleDate.map(lambda x: timeHandle(x))
+#     # test_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
+#
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 #     test_o.loc[:,'saleCount'] = 0
 #
 #     # 特征1： 提取固定特征
@@ -377,12 +441,22 @@ print "Total predictive score:{}".format(score_f)
 #                                # 'dayOn21DayDiff',
 #                                'lastWeekSaleCount_mean',
 #                                # 'expweighted_14_avg',
+<<<<<<< HEAD
 #                                'trend_7','expweighted_7_avg',
 #                                # 'classWeekdayRatio', 'parClassWeekdayRatio',
+=======
+#                                'trend_7',
+#                                # 'expweighted_7_avg',
+#                                'classWeekdayRatio',
+#                                # 'parClassWeekdayRatio',
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 #                                'moving_30_avg','expweighted_30_avg',
 #                                # 'disholDaySaleCount_mean',
 #                                'disholDaySaleCount_max',
-#                                'last2WeekSaleCount_max','last3WeekSaleCount_max'
+#                                'last2WeekSaleCount_max','last3WeekSaleCount_max',
+#                                'Class',
+#                                # 'parClass',
+#                                # 'holDaySaleCount_min',
 #                                # 'holDaySaleCount_min',
 #                                # 'holDaySaleCount_median',
 #                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
@@ -390,7 +464,7 @@ print "Total predictive score:{}".format(score_f)
 #     predictors = [f for f in feature_names if f not in do_not_use_for_training]
 #
 #     params = {'min_child_weight': 100, 'eta': 0.05, 'colsample_bytree': 0.3, 'max_depth': 7,
-#                 'subsample': 0.85, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
+#                 'subsample': 0.8, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
 #                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
 #     boostRound = 120
 #
@@ -457,7 +531,11 @@ print "Total predictive score:{}".format(score_f)
 #
 #         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
 #         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
+<<<<<<< HEAD
 #         model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+=======
+#         # model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+>>>>>>> e3ff4d12f5c8318214375c64e9fc2669969d3c54
 #         param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
 #         # print "Parameter score: "
 #         # print param_score
