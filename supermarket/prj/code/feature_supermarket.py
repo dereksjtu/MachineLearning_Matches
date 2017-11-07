@@ -233,6 +233,8 @@ def get_weekday_ratio_feats(train_new,test):
 def get_hol_sale_feats(train_new,test):
     train_wk = train_new[train_new.holidayCluster == 1]
     train_hol = train_new[train_new.holidayCluster != 1]
+    # train_wk = train_new[train_new.disHoliday_detail == 1]
+    # train_hol = train_new[train_new.disHoliday_detail == 12]
 
     coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_mean':'mean'})
     train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
@@ -246,7 +248,7 @@ def get_hol_sale_feats(train_new,test):
     train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
     test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
 
-    # coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_std':'min'})
+    # coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_median':'median'})
     # train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
     # test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
 
