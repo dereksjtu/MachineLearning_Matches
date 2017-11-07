@@ -158,9 +158,106 @@ def get_commodity_hot_index(train,train_new,test):
     test.loc[:,'parHotIndex'] = train.parClass.map(parHotIndexDict)
     return train,train_new,test
 
+def get_weekday_ratio_feats(train_new,test):
+    coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'sum'})
+    var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'sum'})
+    coord = pd.merge(coord, var, on = 'Class',how='left' )
+    coord.loc[:,'classWeekdayRatio'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio']], on = ['Class','dayOfWeek'], how='left' )
+    test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio']], on = ['Class','dayOfWeek'], how='left' )
+
+    coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'sum'})
+    var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'sum'})
+    coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    coord.loc[:,'parClassWeekdayRatio'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parClassWeekdayRatio']], on = ['parClass','dayOfWeek'], how='left' )
+    test = pd.merge(test, coord[['parClass','dayOfWeek','parClassWeekdayRatio']], on = ['parClass','dayOfWeek'], how='left' )
+
+    # coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'mean'})
+    # var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'mean'})
+    # coord = pd.merge(coord, var, on = 'Class',how='left' )
+    # coord.loc[:,'classWeekdayRatio_mean'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio_mean']], on = ['Class','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio_mean']], on = ['Class','dayOfWeek'], how='left' )
+    #
+    # coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'mean'})
+    # var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'mean'})
+    # coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    # coord.loc[:,'parclassWeekdayRatio_mean'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_mean']], on = ['parClass','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_mean']], on = ['parClass','dayOfWeek'], how='left' )
+
+    # coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'median'})
+    # var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'median'})
+    # coord = pd.merge(coord, var, on = 'Class',how='left' )
+    # coord.loc[:,'classWeekdayRatio_median'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio_median']], on = ['Class','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio_median']], on = ['Class','dayOfWeek'], how='left' )
+    #
+    # coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'median'})
+    # var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'median'})
+    # coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    # coord.loc[:,'parclassWeekdayRatio_median'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_median']], on = ['parClass','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_median']], on = ['parClass','dayOfWeek'], how='left' )
+    #
+    # coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'max'})
+    # var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'max'})
+    # coord = pd.merge(coord, var, on = 'Class',how='left' )
+    # coord.loc[:,'classWeekdayRatio_max'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio_max']], on = ['Class','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio_max']], on = ['Class','dayOfWeek'], how='left' )
+    #
+    # coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'max'})
+    # var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'max'})
+    # coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    # coord.loc[:,'parclassWeekdayRatio_max'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_max']], on = ['parClass','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_max']], on = ['parClass','dayOfWeek'], how='left' )
+    #
+    # coord = train_new.groupby(['Class','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'std'})
+    # var = train_new.groupby(['Class'],as_index=False)['saleCount'].agg({'classCount':'std'})
+    # coord = pd.merge(coord, var, on = 'Class',how='left' )
+    # coord.loc[:,'classWeekdayRatio_std'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['classCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['Class','dayOfWeek','classWeekdayRatio_std']], on = ['Class','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['Class','dayOfWeek','classWeekdayRatio_std']], on = ['Class','dayOfWeek'], how='left' )
+    #
+    # coord = train_new.groupby(['parClass','dayOfWeek'],as_index=False)['saleCount'].agg({'dayOfWeekCount':'std'})
+    # var = train_new.groupby(['parClass'],as_index=False)['saleCount'].agg({'parClassCount':'std'})
+    # coord = pd.merge(coord, var, on = 'parClass',how='left' )
+    # coord.loc[:,'parclassWeekdayRatio_std'] = coord['dayOfWeekCount'] / np.round((1.0 * (coord['parClassCount'] + 1)))
+    # train_new = pd.merge(train_new, coord[['parClass','dayOfWeek','parclassWeekdayRatio_std']], on = ['parClass','dayOfWeek'], how='left' )
+    # test = pd.merge(test, coord[['parClass','dayOfWeek','parclassWeekdayRatio_std']], on = ['parClass','dayOfWeek'], how='left' )
+    return train_new,test
+
 def get_hol_sale_feats(train_new,test):
     train_wk = train_new[train_new.holidayCluster == 1]
     train_hol = train_new[train_new.holidayCluster != 1]
+
+    coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_mean':'mean'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+
+    coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_max':'max'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+
+    coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_std':'std'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+
+    # coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_std':'min'})
+    # train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
+    # test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+
+
+    coord = train_new[train_new['disHoliday_detail'] == 0].groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_0_mean':'mean'})
+    coord.fillna(0.01,inplace=True)
+    train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+    train_new.loc[:,'diswkHolRatio'] = train_new['disholDaySaleCount_mean'] / train_new['disholDaySaleCount_0_mean']
+    test.loc[:,'diswkHolRatio'] = test['disholDaySaleCount_mean'] / test['disholDaySaleCount_0_mean']
+    del train_new['disholDaySaleCount_0_mean'],test['disholDaySaleCount_0_mean']
 
     coord = train_wk.groupby('Class',as_index = False)['saleCount'].agg({'wkDaySaleCount_median':'median'})
     train_new = pd.merge(train_new, coord, on = 'Class', how='left')
@@ -193,6 +290,8 @@ def get_hol_sale_feats(train_new,test):
     coord = train_wk.groupby('Class',as_index=False)['saleCount'].agg({'wkSaleCount':'sum'})
     train_new = pd.merge(train_new, coord, on = 'Class', how='left')
     train_new.loc[:,'wkHolRatio'] = train_new['wkSaleCount'] / (1.0 * (train_new['holSaleCount'] + 1))
+    # train_new.loc[:,'wkDaySaleCount_cv'] = train_new['wkDaySaleCount_max'] - train_new['wkDaySaleCount_min']
+    # train_new.loc[:,'holDaySaleCount_cv'] = train_new['holDaySaleCount_max'] - train_new['holDaySaleCount_min']
 
 
     coord = train_new.groupby('Class',as_index=False)['wkHolRatio'].mean()
@@ -341,13 +440,14 @@ def get_origin_feats(train, train_new, test):
     print "Commodity hot index features done."
     train_new,test = get_hol_sale_feats(train_new,test)
     print "Commodity holiday features done."
+    train_new,test = get_weekday_ratio_feats(train_new,test)
     # train_new, test = get_price_feats(train,train_new, test)
     # print "Commodity price features done."
-    train_new, test = get_coupon_feats(train, train_new, test)
-    print "Coupon features done."
-    train_new, test = get_coupon_hol_feats(train , train_new, test)
-    print "Coupon holiday features done."
-    train_new, test = get_coupon_weekday_feats(train, train_new, test)
+    # train_new, test = get_coupon_feats(train, train_new, test)
+    # print "Coupon features done."
+    # train_new, test = get_coupon_hol_feats(train , train_new, test)
+    # print "Coupon holiday features done."
+    # train_new, test = get_coupon_weekday_feats(train, train_new, test)
     print "Coupon weekday features done."
     print "Commodity original features done."
     return train, train_new, test
@@ -395,6 +495,29 @@ def merge_train_test(train, test):
     return train_test
 
 def get_roll_hot_index_feats(train_test):
+    # # 类别上周，上2周，上3周，上个月总销量
+    # lastWeekSaleCount = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'weekSaleCount':'sum'})
+    # lastMonthSaleCount = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount':'sum'})
+    # lastWeekSaleCount.loc[:,'lastWeekSaleCount'] = lastWeekSaleCount['weekSaleCount'].shift(1)
+    # lastWeekSaleCount['lastWeekSaleCount'].fillna(method='bfill',inplace=True)
+    # lastWeekSaleCount.loc[:,'last2WeekSaleCount'] = lastWeekSaleCount['lastWeekSaleCount'].shift(1)
+    # lastWeekSaleCount['last2WeekSaleCount'].fillna(method='bfill',inplace=True)
+    # lastWeekSaleCount.loc[:,'last3WeekSaleCount'] = lastWeekSaleCount['last2WeekSaleCount'].shift(1)
+    # lastWeekSaleCount['last3WeekSaleCount'].fillna(method='bfill',inplace=True)
+    #
+    # # 上周，上上周，上个月总销量
+    # lastWeekTotSaleCount = train_test.groupby(['weekOfYear'],as_index=False)['saleCount'].agg({'weekSaleCount':'sum'})
+    # lastMonthTotSaleCount = train_test.groupby(['month'],as_index=False)['saleCount'].agg({'lastMonthTotSaleCount':'sum'})
+    # lastWeekTotSaleCount.loc[:,'lastWeekTotSaleCount'] = lastWeekTotSaleCount['weekSaleCount'].shift(1)
+    # lastWeekTotSaleCount['lastWeekTotSaleCount'].fillna(method='bfill',inplace=True)
+    # lastWeekTotSaleCount.loc[:,'last2WeekTotSaleCount'] = lastWeekTotSaleCount['lastWeekTotSaleCount'].shift(1)
+    # lastWeekTotSaleCount['last2WeekTotSaleCount'].fillna(method='bfill',inplace=True)
+    # lastWeekTotSaleCount.loc[:,'last3WeekTotSaleCount'] = lastWeekTotSaleCount['last2WeekTotSaleCount'].shift(1)
+    # lastWeekTotSaleCount['last3WeekTotSaleCount'].fillna(method='bfill',inplace=True)
+    #
+    # lastWeekSaleCount = pd.merge(lastWeekSaleCount,lastWeekTotSaleCount, on = 'weekOfYear',how = 'left')
+    # lastMonthSaleCount = pd.merge(lastMonthSaleCount,lastMonthTotSaleCount, on = 'month',how = 'left')
+
     # 类别上周，上上周，上个月总销量
     lastWeekSaleCount_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount':'sum'})
     last2WeekSaleCount_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount':'sum'})
@@ -431,9 +554,10 @@ def get_roll_hot_index_feats(train_test):
     lastMonthSaleCount = pd.merge(lastMonthSaleCount,lastMonthTotSaleCount, on = 'month',how = 'left')
 
     # 用于合并
-    lastWeekSaleCount.loc[:,'hotPast1WeekIndex'] = np.round(lastWeekSaleCount.lastWeekSaleCount / (1.0 * lastWeekSaleCount.lastWeekTotSaleCount),4)
-    last2WeekSaleCount.loc[:,'hotPast2WeekIndex'] = np.round(last2WeekSaleCount.last2WeekSaleCount / (1.0 * last2WeekSaleCount.last2WeekTotSaleCount),4)
-    lastMonthSaleCount.loc[:,'hotPast1MonthIndex'] = np.round(lastMonthSaleCount.lastMonthSaleCount / (1.0 * lastMonthSaleCount.lastMonthTotSaleCount),4)
+    # lastWeekSaleCount.loc[:,'hotPast1WeekIndex'] = np.round(lastWeekSaleCount.lastWeekSaleCount / (1.0 * lastWeekSaleCount.lastWeekTotSaleCount),4)
+    # lastWeekSaleCount.loc[:,'hotPast2WeekIndex'] = np.round(lastWeekSaleCount.last2WeekSaleCount / (1.0 * lastWeekSaleCount.last2WeekTotSaleCount),4)
+    # lastWeekSaleCount.loc[:,'hotPast3WeekIndex'] = np.round(lastWeekSaleCount.last3WeekSaleCount / (1.0 * lastWeekSaleCount.last3WeekTotSaleCount),4)
+    # lastMonthSaleCount.loc[:,'hotPast1MonthIndex'] = np.round(lastMonthSaleCount.lastMonthSaleCount / (1.0 * lastMonthSaleCount.lastMonthTotSaleCount),4)
 
 
     # 父类
@@ -478,7 +602,7 @@ def get_roll_hot_index_feats(train_test):
     parLastMonthSaleCount.loc[:,'parHotPast1MonthIndex'] = np.round(parLastMonthSaleCount.lastMonthSaleCount / (1.0 * parLastMonthSaleCount.lastMonthTotSaleCount),4)
 
     # 合并 train_test
-    del  lastWeekSaleCount['lastWeekSaleCount' ],   lastWeekSaleCount['lastWeekTotSaleCount']
+    del lastWeekSaleCount['lastWeekSaleCount' ],   lastWeekSaleCount['lastWeekTotSaleCount']
     del last2WeekSaleCount['last2WeekSaleCount'],last2WeekSaleCount['last2WeekTotSaleCount']
     del lastMonthSaleCount['lastMonthSaleCount'],lastMonthSaleCount['lastMonthTotSaleCount']
     del parLastWeekSaleCount ['lastWeekSaleCount' ],  parLastWeekSaleCount['lastWeekTotSaleCount']
@@ -496,62 +620,131 @@ def get_roll_hot_index_feats(train_test):
     return train_test
 
 def get_roll_price_feats(train_test):
-    # 类别上周，上上周，上个月销量统计量 - 均值
-    lastWeekSaleCount_mean_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount_mean':'mean'})
-    last2WeekSaleCount_mean_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount_mean':'mean'})
-    lastMonthSaleCount_mean_o = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount_mean':'mean'})
-    lastWeekSaleCount_mean   = lastWeekSaleCount_mean_o.shift(1)
-    last2WeekSaleCount_mean = last2WeekSaleCount_mean_o.shift(2)
-    lastMonthSaleCount_mean = lastMonthSaleCount_mean_o.shift(1)
-    lastWeekSaleCount_mean.weekOfYear  = lastWeekSaleCount_mean_o.weekOfYear
-    last2WeekSaleCount_mean.weekOfYear = last2WeekSaleCount_mean_o.weekOfYear
-    lastMonthSaleCount_mean.month      = lastMonthSaleCount_mean_o.month
-    lastWeekSaleCount_mean.Class =  lastWeekSaleCount_mean_o.Class
-    last2WeekSaleCount_mean.Class = last2WeekSaleCount_mean_o.Class
-    lastMonthSaleCount_mean.Class = lastMonthSaleCount_mean_o.Class
-    lastWeekSaleCount_mean.lastWeekSaleCount_mean.fillna(0,inplace=True)
-    last2WeekSaleCount_mean.last2WeekSaleCount_mean.fillna(0,inplace=True)
-    lastMonthSaleCount_mean.lastMonthSaleCount_mean.fillna(0,inplace = True)
+    # 类别上周，上2周，上3周，上个月销量统计量 - 均值
+    lastWeeksSaleCount_mean = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'WeekSaleCount_mean':'mean'})
+    lastWeeksSaleCount_mean['lastWeekSaleCount_mean']   = lastWeeksSaleCount_mean['WeekSaleCount_mean'].shift(1)
+    lastWeeksSaleCount_mean['lastWeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_mean['last2WeekSaleCount_mean']   = lastWeeksSaleCount_mean['lastWeekSaleCount_mean'].shift(1)
+    lastWeeksSaleCount_mean['last2WeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_mean['last3WeekSaleCount_mean']   = lastWeeksSaleCount_mean['last2WeekSaleCount_mean'].shift(1)
+    lastWeeksSaleCount_mean['last3WeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_mean['last3WeekSaleCount_mean']   = lastWeeksSaleCount_mean['last2WeekSaleCount_mean'].shift(1)
+    lastWeeksSaleCount_mean['last3WeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    del lastWeeksSaleCount_mean['WeekSaleCount_mean']
+    lastMonthSaleCount_mean = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'monthSaleCount_mean':'mean'})
+    lastMonthSaleCount_mean['lastMonthSaleCount_mean'] = lastMonthSaleCount_mean['monthSaleCount_mean'].shift(1)
+    lastMonthSaleCount_mean['lastMonthSaleCount_mean'].fillna(method='bfill',inplace=True)
+    del lastMonthSaleCount_mean['monthSaleCount_mean']
+
+    # 类别上周，上2周，上3周，上个月销量统计量 - 最大值
+    lastWeeksSaleCount_max = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'WeekSaleCount_max':'max'})
+    lastWeeksSaleCount_max['lastWeekSaleCount_max']   = lastWeeksSaleCount_max['WeekSaleCount_max'].shift(1)
+    lastWeeksSaleCount_max['lastWeekSaleCount_max'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_max['last2WeekSaleCount_max']   = lastWeeksSaleCount_max['lastWeekSaleCount_max'].shift(1)
+    lastWeeksSaleCount_max['last2WeekSaleCount_max'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_max['last3WeekSaleCount_max']   = lastWeeksSaleCount_max['last2WeekSaleCount_max'].shift(1)
+    lastWeeksSaleCount_max['last3WeekSaleCount_max'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_max['last3WeekSaleCount_max']   = lastWeeksSaleCount_max['last2WeekSaleCount_max'].shift(1)
+    lastWeeksSaleCount_max['last3WeekSaleCount_max'].fillna(method='bfill',inplace=True)
+    del lastWeeksSaleCount_max['WeekSaleCount_max']
+    lastMonthSaleCount_max = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'monthSaleCount_max':'max'})
+    lastMonthSaleCount_max['lastMonthSaleCount_max'] = lastMonthSaleCount_max['monthSaleCount_max'].shift(1)
+    lastMonthSaleCount_max['lastMonthSaleCount_max'].fillna(method='bfill',inplace=True)
+    del lastMonthSaleCount_max['monthSaleCount_max']
+
+    # 类别上周，上2周，上3周，上个月销量统计量 - 标准差
+    lastWeeksSaleCount_std = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'WeekSaleCount_std':'std'})
+    lastWeeksSaleCount_std['lastWeekSaleCount_std']   = lastWeeksSaleCount_std['WeekSaleCount_std'].shift(1)
+    lastWeeksSaleCount_std['lastWeekSaleCount_std'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_std['last2WeekSaleCount_std']   = lastWeeksSaleCount_std['lastWeekSaleCount_std'].shift(1)
+    lastWeeksSaleCount_std['last2WeekSaleCount_std'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_std['last3WeekSaleCount_std']   = lastWeeksSaleCount_std['last2WeekSaleCount_std'].shift(1)
+    lastWeeksSaleCount_std['last3WeekSaleCount_std'].fillna(method='bfill',inplace=True)
+    lastWeeksSaleCount_std['last3WeekSaleCount_std']   = lastWeeksSaleCount_std['last2WeekSaleCount_std'].shift(1)
+    lastWeeksSaleCount_std['last3WeekSaleCount_std'].fillna(method='bfill',inplace=True)
+    del lastWeeksSaleCount_std['WeekSaleCount_std']
+    lastMonthSaleCount_std = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'monthSaleCount_std':'std'})
+    lastMonthSaleCount_std['lastMonthSaleCount_std'] = lastMonthSaleCount_std['monthSaleCount_std'].shift(1)
+    lastMonthSaleCount_std['lastMonthSaleCount_std'].fillna(method='bfill',inplace=True)
+    del lastMonthSaleCount_std['monthSaleCount_std']
+
+
+
+
+    # 有毒
+    # # 父类别上周，上2周，上3周，上个月销量统计量 - 均值
+    # parLastWeeksSaleCount_mean = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'WeekSaleCount_mean':'mean'})
+    # parLastWeeksSaleCount_mean['parLastWeekSaleCount_mean']   = parLastWeeksSaleCount_mean['WeekSaleCount_mean'].shift(1)
+    # parLastWeeksSaleCount_mean['parLastWeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    # parLastWeeksSaleCount_mean['parLast2WeekSaleCount_mean']   = parLastWeeksSaleCount_mean['parLastWeekSaleCount_mean'].shift(1)
+    # parLastWeeksSaleCount_mean['parLast2WeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    # parLastWeeksSaleCount_mean['parLast3WeekSaleCount_mean']   = parLastWeeksSaleCount_mean['parLast2WeekSaleCount_mean'].shift(1)
+    # parLastWeeksSaleCount_mean['parLast3WeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    # parLastWeeksSaleCount_mean['parLast3WeekSaleCount_mean']   = parLastWeeksSaleCount_mean['parLast2WeekSaleCount_mean'].shift(1)
+    # parLastWeeksSaleCount_mean['parLast3WeekSaleCount_mean'].fillna(method='bfill',inplace=True)
+    # del parLastWeeksSaleCount_mean['WeekSaleCount_mean']
+    # parLastMonthSaleCount_mean = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parMonthSaleCount_mean':'mean'})
+    # parLastMonthSaleCount_mean['parLastMonthSaleCount_mean'] = parLastMonthSaleCount_mean['parMonthSaleCount_mean'].shift(1)
+    # parLastMonthSaleCount_mean['parLastMonthSaleCount_mean'].fillna(method='bfill',inplace=True)
+    # del parLastMonthSaleCount_mean['parMonthSaleCount_mean']
+
+
+
+    # lastWeekSaleCount_mean_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount_mean':'mean'})
+    # last2WeekSaleCount_mean_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount_mean':'mean'})
+    # lastMonthSaleCount_mean_o = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount_mean':'mean'})
+    # lastWeekSaleCount_mean   = lastWeekSaleCount_mean_o.shift(1)
+    # last2WeekSaleCount_mean = last2WeekSaleCount_mean_o.shift(2)
+    # lastMonthSaleCount_mean = lastMonthSaleCount_mean_o.shift(1)
+    # lastWeekSaleCount_mean.weekOfYear  = lastWeekSaleCount_mean_o.weekOfYear
+    # last2WeekSaleCount_mean.weekOfYear = last2WeekSaleCount_mean_o.weekOfYear
+    # lastMonthSaleCount_mean.month      = lastMonthSaleCount_mean_o.month
+    # lastWeekSaleCount_mean.Class =  lastWeekSaleCount_mean_o.Class
+    # last2WeekSaleCount_mean.Class = last2WeekSaleCount_mean_o.Class
+    # lastMonthSaleCount_mean.Class = lastMonthSaleCount_mean_o.Class
+    # lastWeekSaleCount_mean.lastWeekSaleCount_mean.fillna(0,inplace=True)
+    # last2WeekSaleCount_mean.last2WeekSaleCount_mean.fillna(0,inplace=True)
+    # lastMonthSaleCount_mean.lastMonthSaleCount_mean.fillna(0,inplace = True)
 
     # # 用于合并
     # lastWeekSaleCount_mean
     # last2WeekSaleCount_mean
     # lastMonthSaleCount_mean
 
-    # 父类
-    # 父类别上周，上上周，上个月销量统计量 - 中位数
-    lastWeekSaleCount_median_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount_median':'median'})
-    last2WeekSaleCount_median_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount_median':'median'})
-    lastMonthSaleCount_median_o = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount_median':'median'})
-    lastWeekSaleCount_median   = lastWeekSaleCount_median_o.shift(1)
-    last2WeekSaleCount_median = last2WeekSaleCount_median_o.shift(2)
-    lastMonthSaleCount_median = lastMonthSaleCount_median_o.shift(1)
-    lastWeekSaleCount_median.weekOfYear  = lastWeekSaleCount_median_o.weekOfYear
-    last2WeekSaleCount_median.weekOfYear = last2WeekSaleCount_median_o.weekOfYear
-    lastMonthSaleCount_median.month      = lastMonthSaleCount_median_o.month
-    lastWeekSaleCount_median.Class =  lastWeekSaleCount_median_o.Class
-    last2WeekSaleCount_median.Class = last2WeekSaleCount_median_o.Class
-    lastMonthSaleCount_median.Class = lastMonthSaleCount_median_o.Class
-    lastWeekSaleCount_median.lastWeekSaleCount_median.fillna(0,inplace=True)
-    last2WeekSaleCount_median.last2WeekSaleCount_median.fillna(0,inplace=True)
-    lastMonthSaleCount_median.lastMonthSaleCount_median.fillna(0,inplace = True)
-
-    # 类别上周，上上周，上个月销量统计量 - 标准差
-    lastWeekSaleCount_std_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount_std':'std'})
-    last2WeekSaleCount_std_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount_std':'std'})
-    lastMonthSaleCount_std_o = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount_std':'std'})
-    lastWeekSaleCount_std   = lastWeekSaleCount_std_o.shift(1)
-    last2WeekSaleCount_std = last2WeekSaleCount_std_o.shift(2)
-    lastMonthSaleCount_std = lastMonthSaleCount_std_o.shift(1)
-    lastWeekSaleCount_std.weekOfYear  = lastWeekSaleCount_std_o.weekOfYear
-    last2WeekSaleCount_std.weekOfYear = last2WeekSaleCount_std_o.weekOfYear
-    lastMonthSaleCount_std.month      = lastMonthSaleCount_std_o.month
-    lastWeekSaleCount_std.Class =  lastWeekSaleCount_std_o.Class
-    last2WeekSaleCount_std.Class = last2WeekSaleCount_std_o.Class
-    lastMonthSaleCount_std.Class = lastMonthSaleCount_std_o.Class
-    lastWeekSaleCount_std.lastWeekSaleCount_std.fillna(0,inplace=True)
-    last2WeekSaleCount_std.last2WeekSaleCount_std.fillna(0,inplace=True)
-    lastMonthSaleCount_std.lastMonthSaleCount_std.fillna(0,inplace = True)
+    # # 父类
+    # # 父类别上周，上上周，上个月销量统计量 - 中位数
+    # lastWeekSaleCount_median_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount_median':'median'})
+    # last2WeekSaleCount_median_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount_median':'median'})
+    # lastMonthSaleCount_median_o = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount_median':'median'})
+    # lastWeekSaleCount_median   = lastWeekSaleCount_median_o.shift(1)
+    # last2WeekSaleCount_median = last2WeekSaleCount_median_o.shift(2)
+    # lastMonthSaleCount_median = lastMonthSaleCount_median_o.shift(1)
+    # lastWeekSaleCount_median.weekOfYear  = lastWeekSaleCount_median_o.weekOfYear
+    # last2WeekSaleCount_median.weekOfYear = last2WeekSaleCount_median_o.weekOfYear
+    # lastMonthSaleCount_median.month      = lastMonthSaleCount_median_o.month
+    # lastWeekSaleCount_median.Class =  lastWeekSaleCount_median_o.Class
+    # last2WeekSaleCount_median.Class = last2WeekSaleCount_median_o.Class
+    # lastMonthSaleCount_median.Class = lastMonthSaleCount_median_o.Class
+    # lastWeekSaleCount_median.lastWeekSaleCount_median.fillna(0,inplace=True)
+    # last2WeekSaleCount_median.last2WeekSaleCount_median.fillna(0,inplace=True)
+    # lastMonthSaleCount_median.lastMonthSaleCount_median.fillna(0,inplace = True)
+    #
+    # # 类别上周，上上周，上个月销量统计量 - 标准差
+    # lastWeekSaleCount_std_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount_std':'std'})
+    # last2WeekSaleCount_std_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount_std':'std'})
+    # lastMonthSaleCount_std_o = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount_std':'std'})
+    # lastWeekSaleCount_std   = lastWeekSaleCount_std_o.shift(1)
+    # last2WeekSaleCount_std = last2WeekSaleCount_std_o.shift(2)
+    # lastMonthSaleCount_std = lastMonthSaleCount_std_o.shift(1)
+    # lastWeekSaleCount_std.weekOfYear  = lastWeekSaleCount_std_o.weekOfYear
+    # last2WeekSaleCount_std.weekOfYear = last2WeekSaleCount_std_o.weekOfYear
+    # lastMonthSaleCount_std.month      = lastMonthSaleCount_std_o.month
+    # lastWeekSaleCount_std.Class =  lastWeekSaleCount_std_o.Class
+    # last2WeekSaleCount_std.Class = last2WeekSaleCount_std_o.Class
+    # lastMonthSaleCount_std.Class = lastMonthSaleCount_std_o.Class
+    # lastWeekSaleCount_std.lastWeekSaleCount_std.fillna(0,inplace=True)
+    # last2WeekSaleCount_std.last2WeekSaleCount_std.fillna(0,inplace=True)
+    # lastMonthSaleCount_std.lastMonthSaleCount_std.fillna(0,inplace = True)
 
     # # 用于合并
     # lastWeekSaleCount_median
@@ -559,60 +752,60 @@ def get_roll_price_feats(train_test):
     # lastMonthSaleCount_median
 
     # 父类别上周，上上周，上个月销量统计量 - 均值
-    parLastWeekSaleCount_mean_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_mean':'mean'})
-    parLast2WeekSaleCount_mean_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLast2WeekSaleCount_mean':'mean'})
-    parLastMonthSaleCount_mean_o = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parLastMonthSaleCount_mean':'mean'})
-    parLastWeekSaleCount_mean   = parLastWeekSaleCount_mean_o.shift(1)
-    parLast2WeekSaleCount_mean = parLast2WeekSaleCount_mean_o.shift(2)
-    parLastMonthSaleCount_mean = parLastMonthSaleCount_mean_o.shift(1)
-    parLastWeekSaleCount_mean.weekOfYear  = parLastWeekSaleCount_mean_o.weekOfYear
-    parLast2WeekSaleCount_mean.weekOfYear = parLast2WeekSaleCount_mean_o.weekOfYear
-    parLastMonthSaleCount_mean.month      = parLastMonthSaleCount_mean_o.month
-    parLastWeekSaleCount_mean.parClass =  parLastWeekSaleCount_mean_o.parClass
-    parLast2WeekSaleCount_mean.parClass = parLast2WeekSaleCount_mean_o.parClass
-    parLastMonthSaleCount_mean.parClass = parLastMonthSaleCount_mean_o.parClass
-    parLastWeekSaleCount_mean.parLastWeekSaleCount_mean.fillna(0,inplace=True)
-    parLast2WeekSaleCount_mean.parLast2WeekSaleCount_mean.fillna(0,inplace=True)
-    parLastMonthSaleCount_mean.parLastMonthSaleCount_mean.fillna(0,inplace = True)
+    # parLastWeekSaleCount_mean_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_mean':'mean'})
+    # parLast2WeekSaleCount_mean_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLast2WeekSaleCount_mean':'mean'})
+    # parLastMonthSaleCount_mean_o = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parLastMonthSaleCount_mean':'mean'})
+    # parLastWeekSaleCount_mean   = parLastWeekSaleCount_mean_o.shift(1)
+    # parLast2WeekSaleCount_mean = parLast2WeekSaleCount_mean_o.shift(2)
+    # parLastMonthSaleCount_mean = parLastMonthSaleCount_mean_o.shift(1)
+    # parLastWeekSaleCount_mean.weekOfYear  = parLastWeekSaleCount_mean_o.weekOfYear
+    # parLast2WeekSaleCount_mean.weekOfYear = parLast2WeekSaleCount_mean_o.weekOfYear
+    # parLastMonthSaleCount_mean.month      = parLastMonthSaleCount_mean_o.month
+    # parLastWeekSaleCount_mean.parClass =  parLastWeekSaleCount_mean_o.parClass
+    # parLast2WeekSaleCount_mean.parClass = parLast2WeekSaleCount_mean_o.parClass
+    # parLastMonthSaleCount_mean.parClass = parLastMonthSaleCount_mean_o.parClass
+    # parLastWeekSaleCount_mean.parLastWeekSaleCount_mean.fillna(0,inplace=True)
+    # parLast2WeekSaleCount_mean.parLast2WeekSaleCount_mean.fillna(0,inplace=True)
+    # parLastMonthSaleCount_mean.parLastMonthSaleCount_mean.fillna(0,inplace = True)
 
     # # 用于合并
     # parLastWeekSaleCount_mean
     # parLast2WeekSaleCount_mean
     # parLastMonthSaleCount_mean
 
-    # 类别上周，上上周，上个月销量统计量 - 中位数
-    parLastWeekSaleCount_median_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_median':'median'})
-    parLast2WeekSaleCount_median_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLast2WeekSaleCount_median':'median'})
-    parLastMonthSaleCount_median_o = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parLastMonthSaleCount_median':'median'})
-    parLastWeekSaleCount_median   = parLastWeekSaleCount_median_o.shift(1)
-    parLast2WeekSaleCount_median = parLast2WeekSaleCount_median_o.shift(2)
-    parLastMonthSaleCount_median = parLastMonthSaleCount_median_o.shift(1)
-    parLastWeekSaleCount_median.weekOfYear  = parLastWeekSaleCount_median_o.weekOfYear
-    parLast2WeekSaleCount_median.weekOfYear = parLast2WeekSaleCount_median_o.weekOfYear
-    parLastMonthSaleCount_median.month      = parLastMonthSaleCount_median_o.month
-    parLastWeekSaleCount_median.parClass =  parLastWeekSaleCount_median_o.parClass
-    parLast2WeekSaleCount_median.parClass = parLast2WeekSaleCount_median_o.parClass
-    parLastMonthSaleCount_median.parClass = parLastMonthSaleCount_median_o.parClass
-    parLastWeekSaleCount_median.parLastWeekSaleCount_median.fillna(0,inplace=True)
-    parLast2WeekSaleCount_median.parLast2WeekSaleCount_median.fillna(0,inplace=True)
-    parLastMonthSaleCount_median.parLastMonthSaleCount_median.fillna(0,inplace = True)
-
-    # 类别上周，上上周，上个月销量统计量 - 标准差
-    parLastWeekSaleCount_std_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_std':'std'})
-    parLast2WeekSaleCount_std_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLast2WeekSaleCount_std':'std'})
-    parLastMonthSaleCount_std_o = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parLastMonthSaleCount_std':'std'})
-    parLastWeekSaleCount_std   = parLastWeekSaleCount_std_o.shift(1)
-    parLast2WeekSaleCount_std = parLast2WeekSaleCount_std_o.shift(2)
-    parLastMonthSaleCount_std = parLastMonthSaleCount_std_o.shift(1)
-    parLastWeekSaleCount_std.weekOfYear  = parLastWeekSaleCount_std_o.weekOfYear
-    parLast2WeekSaleCount_std.weekOfYear = parLast2WeekSaleCount_std_o.weekOfYear
-    parLastMonthSaleCount_std.month      = parLastMonthSaleCount_std_o.month
-    parLastWeekSaleCount_std.parClass =  parLastWeekSaleCount_std_o.parClass
-    parLast2WeekSaleCount_std.parClass = parLast2WeekSaleCount_std_o.parClass
-    parLastMonthSaleCount_std.parClass = parLastMonthSaleCount_std_o.parClass
-    parLastWeekSaleCount_std.parLastWeekSaleCount_std.fillna(0,inplace=True)
-    parLast2WeekSaleCount_std.parLast2WeekSaleCount_std.fillna(0,inplace=True)
-    parLastMonthSaleCount_std.parLastMonthSaleCount_std.fillna(0,inplace = True)
+    # # 类别上周，上上周，上个月销量统计量 - 中位数
+    # parLastWeekSaleCount_median_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_median':'median'})
+    # parLast2WeekSaleCount_median_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLast2WeekSaleCount_median':'median'})
+    # parLastMonthSaleCount_median_o = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parLastMonthSaleCount_median':'median'})
+    # parLastWeekSaleCount_median   = parLastWeekSaleCount_median_o.shift(1)
+    # parLast2WeekSaleCount_median = parLast2WeekSaleCount_median_o.shift(2)
+    # parLastMonthSaleCount_median = parLastMonthSaleCount_median_o.shift(1)
+    # parLastWeekSaleCount_median.weekOfYear  = parLastWeekSaleCount_median_o.weekOfYear
+    # parLast2WeekSaleCount_median.weekOfYear = parLast2WeekSaleCount_median_o.weekOfYear
+    # parLastMonthSaleCount_median.month      = parLastMonthSaleCount_median_o.month
+    # parLastWeekSaleCount_median.parClass =  parLastWeekSaleCount_median_o.parClass
+    # parLast2WeekSaleCount_median.parClass = parLast2WeekSaleCount_median_o.parClass
+    # parLastMonthSaleCount_median.parClass = parLastMonthSaleCount_median_o.parClass
+    # parLastWeekSaleCount_median.parLastWeekSaleCount_median.fillna(0,inplace=True)
+    # parLast2WeekSaleCount_median.parLast2WeekSaleCount_median.fillna(0,inplace=True)
+    # parLastMonthSaleCount_median.parLastMonthSaleCount_median.fillna(0,inplace = True)
+    #
+    # # 类别上周，上上周，上个月销量统计量 - 标准差
+    # parLastWeekSaleCount_std_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_std':'std'})
+    # parLast2WeekSaleCount_std_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLast2WeekSaleCount_std':'std'})
+    # parLastMonthSaleCount_std_o = train_test.groupby(['parClass','month'],as_index=False)['saleCount'].agg({'parLastMonthSaleCount_std':'std'})
+    # parLastWeekSaleCount_std   = parLastWeekSaleCount_std_o.shift(1)
+    # parLast2WeekSaleCount_std = parLast2WeekSaleCount_std_o.shift(2)
+    # parLastMonthSaleCount_std = parLastMonthSaleCount_std_o.shift(1)
+    # parLastWeekSaleCount_std.weekOfYear  = parLastWeekSaleCount_std_o.weekOfYear
+    # parLast2WeekSaleCount_std.weekOfYear = parLast2WeekSaleCount_std_o.weekOfYear
+    # parLastMonthSaleCount_std.month      = parLastMonthSaleCount_std_o.month
+    # parLastWeekSaleCount_std.parClass =  parLastWeekSaleCount_std_o.parClass
+    # parLast2WeekSaleCount_std.parClass = parLast2WeekSaleCount_std_o.parClass
+    # parLastMonthSaleCount_std.parClass = parLastMonthSaleCount_std_o.parClass
+    # parLastWeekSaleCount_std.parLastWeekSaleCount_std.fillna(0,inplace=True)
+    # parLast2WeekSaleCount_std.parLast2WeekSaleCount_std.fillna(0,inplace=True)
+    # parLastMonthSaleCount_std.parLastMonthSaleCount_std.fillna(0,inplace = True)
 
     # # 类别上周，上上周，上个月销量统计量 - 极差
     # parLastWeekSaleCount_ptp_o = train_test.groupby(['parClass','weekOfYear'],as_index=False)['saleCount'].agg({'parLastWeekSaleCount_ptp':'ptp'})
@@ -636,11 +829,32 @@ def get_roll_price_feats(train_test):
     # parLast2WeekSaleCount_median
     # parLastMonthSaleCount_median
 
+    # coord = train_test.groupby(['Class','dayOfYear'],as_index=False)['saleCount'].agg({'saleCount_mean':'mean'})
+    # coord['saleCount_mean'] =  coord['saleCount_mean'].shift(7)
+    # coord.rename(columns={'saleCount_mean':'lastWeekSaleCount'},inplace=True)
+    # coord['lastWeekSaleCount'].fillna(method='bfill',inplace=True)
+    # train_test = pd.merge(train_test, coord,on=['Class','dayOfYear'],how='left')
 
     # 合并 train_test
-    tmp = pd.merge(train_test,lastWeekSaleCount_mean,on=['Class','weekOfYear'],how='left')
-    # tmp = pd.merge(tmp,last2WeekSaleCount_mean,on=['Class','weekOfYear'],how='left')
+    tmp = pd.merge(train_test,lastWeeksSaleCount_mean,on=['Class','weekOfYear'],how='left')
     tmp = pd.merge(tmp,lastMonthSaleCount_mean,on=['Class','month'],how='left')
+    # tmp = pd.merge(tmp,lastWeeksSaleCount_std,on=['Class','weekOfYear'],how='left')
+    # tmp = pd.merge(tmp,lastMonthSaleCount_std,on=['Class','month'],how='left')
+    # tmp = pd.merge(tmp,lastWeeksSaleCount_max,on=['Class','weekOfYear'],how='left')
+    # tmp = pd.merge(tmp,lastMonthSaleCount_max,on=['Class','month'],how='left')
+    train_test = tmp.copy()
+
+    # train_test.loc[:,'lastWeekSaleRatio'] = train_test['lastWeekSaleCount'] / (1.0 * train_test['lastWeekSaleCount_mean'] + 1)
+    # train_test.loc[:,'last2WeekSaleRatio'] = train_test['lastWeekSaleCount'] / (1.0 * train_test['last2WeekSaleCount_mean'] + 1)
+    # train_test.loc[:,'last3WeekSaleRatio'] = train_test['lastWeekSaleCount'] / (1.0 * train_test['last3WeekSaleCount_mean'] + 1)
+    # train_test.loc[:,'lastMonthSaleRatio'] = train_test['lastWeekSaleCount'] / (1.0 * train_test['lastMonthSaleCount_mean'] + 1)
+
+
+    # tmp = pd.merge(tmp,parLastWeeksSaleCount_mean,on=['parClass','weekOfYear'],how='left')
+    # tmp = pd.merge(tmp,parLastMonthSaleCount_mean,on=['parClass','month'],how='left')
+
+
+    # tmp = pd.merge(tmp,lastMonthSaleCount_mean,on=['Class','month'],how='left')
     # tmp = pd.merge(tmp,lastWeekSaleCount_median,on=['Class','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,last2WeekSaleCount_median,on=['Class','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,lastMonthSaleCount_median,on=['Class','month'],how='left')
@@ -651,7 +865,7 @@ def get_roll_price_feats(train_test):
 
     # tmp = pd.merge(tmp,parLastWeekSaleCount_mean,on=['parClass','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,parLast2WeekSaleCount_mean,on=['parClass','weekOfYear'],how='left')
-    tmp = pd.merge(tmp,parLastMonthSaleCount_mean,on=['parClass','month'],how='left')
+    # tmp = pd.merge(tmp,parLastMonthSaleCount_mean,on=['parClass','month'],how='left')
     # tmp = pd.merge(tmp,parLastWeekSaleCount_median,on=['parClass','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,parLast2WeekSaleCount_median,on=['parClass','weekOfYear'],how='left')
     # tmp = pd.merge(tmp,parLastMonthSaleCount_median,on=['parClass','month'],how='left')
@@ -661,7 +875,7 @@ def get_roll_price_feats(train_test):
     # tmp = pd.merge(tmp,parLastMonthSaleCount_std,on=['parClass','month'],how='left')
 
     # print 'new added features:',np.setdiff1d(tmp.columns, train_test.columns)
-    train_test = tmp.copy()
+
     return train_test
 
 def get_roll_week_sale_feats(train_test):
@@ -673,6 +887,7 @@ def get_roll_week_sale_feats(train_test):
     lastMonthTotSaleCount['month'] = lastMonthTotSaleCount_o['month']
     lastMonthTotSaleCount.fillna(1,inplace=True)    # 缺失值处理
     lastMonthTotSaleCount['lastMonthTotSaleCount'][lastMonthTotSaleCount['lastMonthTotSaleCount'] == 0.0] = 1  #把分母设为1
+
     lastWeekDayTotSaleCount_o = train_test.groupby(['Class','month','dayOfWeek'],as_index=False)['saleCount'].agg({'lastWeekDayTotSaleCount':'sum'})
     lastWeekDayTotSaleCount = lastWeekDayTotSaleCount_o.shift(7)
     lastWeekDayTotSaleCount['Class']     = lastWeekDayTotSaleCount_o['Class']
@@ -806,7 +1021,9 @@ def get_roll_week_sale_feats(train_test):
     # weekOnWeekRatio # Class,dayOfYear
     # parLastWeekDayTotSaleCount #parClass month dayOfWeek
     # parWeekOnWeekRatio
-    day3OoverWeek3Tot #Class weekOfYear
+    # day3OoverWeek3Tot #Class weekOfYear
+
+
     #开始合并
     # 合并 train_test
     del lastWeekDayTotSaleCount['lastWeekDayTotSaleCount' ],lastWeekDayTotSaleCount['lastMonthTotSaleCount' ]
@@ -822,6 +1039,23 @@ def get_roll_week_sale_feats(train_test):
 
     # print 'new added features:',np.setdiff1d(tmp.columns, train_test.columns)
     train_test = tmp.copy()
+
+
+    # lastWeeksSaleCount = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'weekSaleCount':'sum'})
+    # # lastWeeksSaleCount['lastWeekSaleCount'] = lastWeeksSaleCount['weekSaleCount'].shift(1)
+    # # lastWeeksSaleCount.fillna(method='bfill',inplace=True)
+    # # lastWeeksSaleCount['last2WeekSaleCount'] = lastWeeksSaleCount['lastWeekSaleCount'].shift(1)
+    # # lastWeeksSaleCount.fillna(method='bfill',inplace=True)
+    # # lastWeeksSaleCount['last3WeekSaleCount'] = lastWeeksSaleCount['last2WeekSaleCount'].shift(1)
+    # # lastWeeksSaleCount.fillna(method='bfill',inplace=True)
+    # # lastWeeksSaleCount['last4WeekSaleCount'] = lastWeeksSaleCount['last3WeekSaleCount'].shift(1)
+    # # lastWeeksSaleCount.fillna(method='bfill',inplace=True)
+    # lastWeeksSaleCount.loc[:,'lastWeekdiff'] = lastWeeksSaleCount['weekSaleCount'].diff(1)
+    # lastWeeksSaleCount.loc[:,'last2Weekdiff'] = lastWeeksSaleCount['weekSaleCount'].diff(2)
+    # lastWeeksSaleCount.loc[:,'last3Weekdiff'] = lastWeeksSaleCount['weekSaleCount'].diff(3)
+    # lastWeeksSaleCount.loc[:,'last3Weekdiff'] = lastWeeksSaleCount['weekSaleCount'].diff(4)
+    # del lastWeeksSaleCount['lastWeekdiff']
+    # train_test = pd.merge(train_test, lastWeeksSaleCount, on=['Class','weekOfYear'], how='left')
 
     return train_test
 
@@ -891,9 +1125,15 @@ def get_roll_diff_feats(train_test):
     diff = pd.merge(diff,last21DaysSaleCount,on = ['Class','dayOfYear'], how='left')
 
     #前三天均值
-    diff.loc[:,'last3Days_mean'] = (diff['last7DaysSaleCount'] + diff['last8DaysSaleCount'] + diff['last9DaysSaleCount'])/3.0
+    diff.loc[:,'last4Days_mean'] = (diff['last7DaysSaleCount'] + diff['last8DaysSaleCount'] + diff['last9DaysSaleCount'] + diff['last10DaysSaleCount'])/4.0
     diff.loc[:,'last6Days_mean'] = (diff['last7DaysSaleCount'] + diff['last8DaysSaleCount'] + diff['last9DaysSaleCount'] + diff['last10DaysSaleCount'] + diff['last11DaysSaleCount'] + diff['last12DaysSaleCount'])/6.0
-    diff.loc[:,'last3InterDays_mean'] = (diff['last10DaysSaleCount'] + diff['last11DaysSaleCount'] + diff['last12DaysSaleCount'])/3.0
+    diff.loc[:,'last7Days_mean'] = (diff['last7DaysSaleCount'] + diff['last8DaysSaleCount'] + diff['last9DaysSaleCount'] + diff['last10DaysSaleCount'] + diff['last11DaysSaleCount'] + diff['last12DaysSaleCount'] + diff['last13DaysSaleCount'])/7.0
+    diff.loc[:,'last3Days_mean'] = (diff['last7DaysSaleCount'] + diff['last8DaysSaleCount'] + diff['last9DaysSaleCount'])/3.0
+    diff.loc[:,'last3InterDays1_mean'] = (diff['last8DaysSaleCount'] + diff['last9DaysSaleCount'] + diff['last10DaysSaleCount'])/3.0
+    diff.loc[:,'last3InterDays2_mean'] = (diff['last9DaysSaleCount'] + diff['last10DaysSaleCount'] + diff['last11DaysSaleCount'])/3.0
+    diff.loc[:,'last3InterDays3_mean'] = (diff['last10DaysSaleCount'] + diff['last11DaysSaleCount'] + diff['last12DaysSaleCount'])/3.0
+    diff.loc[:,'last3InterDays4_mean'] = (diff['last11DaysSaleCount'] + diff['last12DaysSaleCount'] + diff['last13DaysSaleCount'])/3.0
+    diff.loc[:,'last3InterDays5_mean'] = (diff['last12DaysSaleCount'] + diff['last13DaysSaleCount'] + diff['last14DaysSaleCount'])/3.0
 
     #用于合并
     diff.loc[:,'dayOn1DayDiff'] = diff['last7DaysSaleCount'] - diff['last8DaysSaleCount']
@@ -906,7 +1146,10 @@ def get_roll_diff_feats(train_test):
     diff.loc[:,'dayOn14DayDiff'] = diff['last7DaysSaleCount'] - diff['last21DaysSaleCount']
 
     #开始合并
-    tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff','dayOn14DayDiff','last3Days_mean','last6Days_mean','last3InterDays_mean']],on=['Class','dayOfYear'],how='left')
+    tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff','dayOn14DayDiff','last3Days_mean','last6Days_mean','last3InterDays1_mean','last4Days_mean']],on=['Class','dayOfYear'],how='left')
+    # tmp = pd.merge(train_test,diff[['Class','dayOfYear','dayOn1DayDiff','dayOn2DayDiff','dayOn3DayDiff','dayOn4DayDiff','dayOn5DayDiff','dayOn6DayDiff','dayOn7DayDiff','dayOn14DayDiff','last3Days_mean','last6Days_mean','last3InterDays_mean']],on=['Class','dayOfYear'],how='left')
+    # del diff['last7DaysSaleCount'],diff['last8DaysSaleCount'],diff['last9DaysSaleCount'],diff['last10DaysSaleCount'],diff['last11DaysSaleCount'],diff['last12DaysSaleCount'],diff['last13DaysSaleCount'],diff['last14DaysSaleCount'],diff['last21DaysSaleCount']
+    # tmp = pd.merge(train_test,diff[['Class','dayOfYear']],on=['Class','dayOfYear'],how='left')
     # print 'new added features:',np.setdiff1d(tmp.columns, train_test.columns)
     train_test = tmp.copy()
     return train_test
@@ -914,10 +1157,10 @@ def get_roll_diff_feats(train_test):
 def get_trend(train_test):
     from statsmodels.tsa.seasonal import seasonal_decompose
     do_not_use_class = [1507,3208,3311,3413]
-    train_test.loc[:,'trend_14'] = 0
-    train_test.loc[:,'expweighted_14_avg'] = 0
-    # train_test.loc[:,'moving_14_avg'] = 0
-    step = 14
+    train_test.loc[:,'trend_30'] = 0
+    train_test.loc[:,'expweighted_30_avg'] = 0
+    # train_test.loc[:,'moving_30_avg'] = 0
+    step = 30
     l = train_test['Class'].unique()
     l = [f for f in l if f not in do_not_use_class]
     for i in l:
@@ -925,60 +1168,60 @@ def get_trend(train_test):
         var = var.values
         # print i
         decomposition = seasonal_decompose(var,freq = step)
-        expweighted_avg = pd.ewma(var,halflife=step)
-        moving_avg = pd.rolling_mean(var,step)
+        expweighted_avg = pd.ewma(var,halflife= step)
+        # moving_avg = pd.rolling_mean(var,step)
         trend = decomposition.trend
-        train_test['trend_14'][train_test['Class'] == i] = trend
-        train_test['expweighted_14_avg'][train_test['Class'] == i] = expweighted_avg
-        # train_test['moving_avg'][train_test['Class'] == i] = moving_avg
-    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_14'].mean()
+        train_test['trend_30'][train_test['Class'] == i] = trend
+        train_test['expweighted_30_avg'][train_test['Class'] == i] = expweighted_avg
+        # train_test['moving_30_avg'][train_test['Class'] == i] = moving_avg
+    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_30'].mean()
     coord_shift = coord.shift(step)
     coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    del train_test['trend_14']
+    del train_test['trend_30']
     train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    train_test['trend_14'].fillna(0,inplace=True)
+    train_test['trend_30'].fillna(0,inplace=True)
 
-    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_14_avg'].mean()
+    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_30_avg'].mean()
     coord_shift = coord.shift(step)
     coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    del train_test['expweighted_14_avg']
+    del train_test['expweighted_30_avg']
     train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    train_test['expweighted_14_avg'].fillna(0,inplace=True)
+    train_test['expweighted_30_avg'].fillna(0,inplace=True)
 
-    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['moving_avg'].mean()
+    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['moving_14_avg'].mean()
     # coord_shift = coord.shift(step)
     # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    # del train_test['moving_avg']
+    # del train_test['moving_14_avg']
     # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    # train_test['moving_avg'].fillna(0,inplace=True)
+    # train_test['moving_14_avg'].fillna(0,inplace=True)
 
-    train_test.loc[:,'trend_7'] = 0
-    train_test.loc[:,'expweighted_7_avg'] = 0
-    # train_test.loc[:,'moving_7_avg'] = 0
-    step = 7
-    for i in train_test['Class'].unique():
-        var = train_test[train_test['Class'] == i]['saleCount']
-        var = var.values
-        decomposition = seasonal_decompose(var,freq = step)
-        expweighted_avg = pd.ewma(var,halflife=step)
-        moving_avg = pd.rolling_std(var,step)
-        trend = decomposition.trend
-        train_test['trend_7'][train_test['Class'] == i] = trend
-        train_test['expweighted_7_avg'][train_test['Class'] == i] = expweighted_avg
-        # train_test['moving_7_avg'][train_test['Class'] == i] = moving_avg
-    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_7'].mean()
-    coord_shift = coord.shift(step)
-    coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    del train_test['trend_7']
-    train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    train_test['trend_7'].fillna(0,inplace=True)
-
-    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_7_avg'].mean()
-    coord_shift = coord.shift(step)
-    coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    del train_test['expweighted_7_avg']
-    train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    train_test['expweighted_7_avg'].fillna(0,inplace=True)
+    # train_test.loc[:,'trend_7'] = 0
+    # train_test.loc[:,'expweighted_7_avg'] = 0
+    # # train_test.loc[:,'moving_7_avg'] = 0
+    # step = 7
+    # for i in train_test['Class'].unique():
+    #     var = train_test[train_test['Class'] == i]['saleCount']
+    #     var = var.values
+    #     decomposition = seasonal_decompose(var,freq = step)
+    #     expweighted_avg = pd.ewma(var,halflife=step)
+    #     # moving_avg = pd.rolling_std(var,step)
+    #     trend = decomposition.trend
+    #     train_test['trend_7'][train_test['Class'] == i] = trend
+    #     train_test['expweighted_7_avg'][train_test['Class'] == i] = expweighted_avg
+    #     # train_test['moving_7_avg'][train_test['Class'] == i] = moving_avg
+    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['trend_7'].mean()
+    # coord_shift = coord.shift(step)
+    # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
+    # del train_test['trend_7']
+    # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
+    # train_test['trend_7'].fillna(0,inplace=True)
+    #
+    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_7_avg'].mean()
+    # coord_shift = coord.shift(step)
+    # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
+    # del train_test['expweighted_7_avg']
+    # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
+    # train_test['expweighted_7_avg'].fillna(0,inplace=True)
 
     # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['moving_7_avg'].mean()
     # coord_shift = coord.shift(step)
@@ -997,7 +1240,7 @@ def get_roll_feats(train_test):
     print "Roll trend done."
     train_test = get_roll_hot_index_feats(train_test)
     print "Roll hot index features done."
-    # train_test = get_roll_price_feats(train_test)
+    train_test = get_roll_price_feats(train_test)
     # print "Roll price features done."
     train_test = get_roll_week_sale_feats(train_test)
     print "Roll week sale features done."
