@@ -442,7 +442,7 @@ def get_origin_feats(train, train_new, test):
     print "Commodity hot index features done."
     train_new,test = get_hol_sale_feats(train_new,test)
     print "Commodity holiday features done."
-    train_new,test = get_weekday_ratio_feats(train_new,test)
+    # train_new,test = get_weekday_ratio_feats(train_new,test)
     # train_new, test = get_price_feats(train,train_new, test)
     # print "Commodity price features done."
     # train_new, test = get_coupon_feats(train, train_new, test)
@@ -1238,8 +1238,8 @@ def get_trend(train_test):
 def get_roll_feats(train_test):
     l_feat_original = train_test.columns
     print "Start extracting rolling features....."
-    train_test = get_trend(train_test)
-    print "Roll trend done."
+    # train_test = get_trend(train_test)
+    # print "Roll trend done."
     train_test = get_roll_hot_index_feats(train_test)
     print "Roll hot index features done."
     train_test = get_roll_price_feats(train_test)
