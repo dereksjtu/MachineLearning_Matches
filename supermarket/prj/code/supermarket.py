@@ -406,7 +406,7 @@ if __name__ == "__main__":
     params = {'min_child_weight': 100, 'eta': 0.05, 'colsample_bytree': 0.3, 'max_depth': 7,
                 'subsample': 0.8, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
-    boostRound = 120
+    boostRound = 300
 
     xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
     xgbvalid = xgb.DMatrix(test_feat_1[predictors])
