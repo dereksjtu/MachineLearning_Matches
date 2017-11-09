@@ -234,6 +234,7 @@ def get_hol_sale_feats(train_new,test):
     train_wk = train_new[train_new.holidayCluster == 1]
     train_hol = train_new[train_new.holidayCluster != 1]
 
+    #节假日
     coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_mean':'mean'})
     train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
     test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
@@ -245,6 +246,23 @@ def get_hol_sale_feats(train_new,test):
     coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_std':'std'})
     train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
     test = pd.merge(test, coord, on = ['Class','disHoliday_detail'], how='left')
+
+    #工作日
+    coord  = train_new.groupby(['Class','disWorkday_detail'],as_index=False)['saleCount'].agg({'diswkDaySaleCount_mean':'mean'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disWorkday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disWorkday_detail'], how='left')
+
+    coord  = train_new.groupby(['Class','disWorkday_detail'],as_index=False)['saleCount'].agg({'diswkDaySaleCount_median':'median'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disWorkday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disWorkday_detail'], how='left')
+
+    coord  = train_new.groupby(['Class','disWorkday_detail'],as_index=False)['saleCount'].agg({'diswkDaySaleCount_max':'max'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disWorkday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disWorkday_detail'], how='left')
+
+    coord  = train_new.groupby(['Class','disWorkday_detail'],as_index=False)['saleCount'].agg({'diswkDaySaleCount_std':'std'})
+    train_new = pd.merge(train_new, coord, on = ['Class','disWorkday_detail'], how='left')
+    test = pd.merge(test, coord, on = ['Class','disWorkday_detail'], how='left')
 
     # coord  = train_new.groupby(['Class','disHoliday_detail'],as_index=False)['saleCount'].agg({'disholDaySaleCount_std':'min'})
     # train_new = pd.merge(train_new, coord, on = ['Class','disHoliday_detail'], how='left')
@@ -495,29 +513,6 @@ def merge_train_test(train, test):
     return train_test
 
 def get_roll_hot_index_feats(train_test):
-    # # 类别上周，上2周，上3周，上个月总销量
-    # lastWeekSaleCount = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'weekSaleCount':'sum'})
-    # lastMonthSaleCount = train_test.groupby(['Class','month'],as_index=False)['saleCount'].agg({'lastMonthSaleCount':'sum'})
-    # lastWeekSaleCount.loc[:,'lastWeekSaleCount'] = lastWeekSaleCount['weekSaleCount'].shift(1)
-    # lastWeekSaleCount['lastWeekSaleCount'].fillna(method='bfill',inplace=True)
-    # lastWeekSaleCount.loc[:,'last2WeekSaleCount'] = lastWeekSaleCount['lastWeekSaleCount'].shift(1)
-    # lastWeekSaleCount['last2WeekSaleCount'].fillna(method='bfill',inplace=True)
-    # lastWeekSaleCount.loc[:,'last3WeekSaleCount'] = lastWeekSaleCount['last2WeekSaleCount'].shift(1)
-    # lastWeekSaleCount['last3WeekSaleCount'].fillna(method='bfill',inplace=True)
-    #
-    # # 上周，上上周，上个月总销量
-    # lastWeekTotSaleCount = train_test.groupby(['weekOfYear'],as_index=False)['saleCount'].agg({'weekSaleCount':'sum'})
-    # lastMonthTotSaleCount = train_test.groupby(['month'],as_index=False)['saleCount'].agg({'lastMonthTotSaleCount':'sum'})
-    # lastWeekTotSaleCount.loc[:,'lastWeekTotSaleCount'] = lastWeekTotSaleCount['weekSaleCount'].shift(1)
-    # lastWeekTotSaleCount['lastWeekTotSaleCount'].fillna(method='bfill',inplace=True)
-    # lastWeekTotSaleCount.loc[:,'last2WeekTotSaleCount'] = lastWeekTotSaleCount['lastWeekTotSaleCount'].shift(1)
-    # lastWeekTotSaleCount['last2WeekTotSaleCount'].fillna(method='bfill',inplace=True)
-    # lastWeekTotSaleCount.loc[:,'last3WeekTotSaleCount'] = lastWeekTotSaleCount['last2WeekTotSaleCount'].shift(1)
-    # lastWeekTotSaleCount['last3WeekTotSaleCount'].fillna(method='bfill',inplace=True)
-    #
-    # lastWeekSaleCount = pd.merge(lastWeekSaleCount,lastWeekTotSaleCount, on = 'weekOfYear',how = 'left')
-    # lastMonthSaleCount = pd.merge(lastMonthSaleCount,lastMonthTotSaleCount, on = 'month',how = 'left')
-
     # 类别上周，上上周，上个月总销量
     lastWeekSaleCount_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'lastWeekSaleCount':'sum'})
     last2WeekSaleCount_o = train_test.groupby(['Class','weekOfYear'],as_index=False)['saleCount'].agg({'last2WeekSaleCount':'sum'})
