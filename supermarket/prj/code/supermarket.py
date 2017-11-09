@@ -216,28 +216,37 @@ if __name__ == "__main__":
                                # 'expweighted_7_avg',
                                'classWeekdayRatio',
                                # 'parClassWeekdayRatio',
-                               'moving_30_avg','expweighted_30_avg',
-                               'moving_21_avg','expweighted_21_avg',
-                               'moving_14_avg','expweighted_14_avg',
-                               'moving_7_avg','expweighted_7_avg',
+                               'moving_30_avg',
+                               'expweighted_30_avg',
+                               'moving_21_avg',
+                               'expweighted_21_avg',
+                               'moving_14_avg',
+                               # 'expweighted_14_avg',
+                               'moving_7_avg',
+                               'expweighted_7_avg',
                                # 'disholDaySaleCount_mean',
                                'disholDaySaleCount_max',
                                'last2WeekSaleCount_max','last3WeekSaleCount_max',
                                'Class',
+                               'last3wTot','last4wTot','last2wTot','last1wTot',
+                               'last21d','last28d','last7d','last14d',
+                               'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
+                               # 'diff_2',
                                # 'parClass',
                                # 'holDaySaleCount_min',
                                # 'holDaySaleCount_min',
                                # 'holDaySaleCount_median',
                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
+                               # 'last2d','last4d','last'
                                ]
 
 
     predictors = [f for f in feature_names if f not in do_not_use_for_training]
 
-    params = {'min_child_weight': 100, 'eta': 0.05, 'colsample_bytree': 0.3, 'max_depth': 7,
+    params = {'min_child_weight': 100, 'eta': 0.02, 'colsample_bytree': 0.3, 'max_depth': 7,
                 'subsample': 0.8, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
-    boostRound = 1100
+    boostRound = 1000
 
     # print train_feat_1[predictors]
 
@@ -246,6 +255,7 @@ if __name__ == "__main__":
     model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
     param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
     print "Parameter score: "
+    param_score.to_csv('param_score.csv')
     print param_score, len(predictors)
     test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
     result = test_feat_1[['Class','SaleDate','saleCount']]
@@ -294,11 +304,11 @@ if __name__ == "__main__":
         # feature_names = list(train_feat_1.columns)
         # predictors = [f for f in feature_names if f not in do_not_use_for_training]
 
-
+        # train_feat_1 = exclude_abnormal_value(train_feat_1)
         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
         # if i % 7 == 0:
-        #     model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+        # model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
 
         test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
         result_i = test_feat_1[['Class','SaleDate','saleCount']]
@@ -316,8 +326,6 @@ if __name__ == "__main__":
 
 result = pd.merge(test_valid[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
 result['saleCount'][result['saleCount'] < 0] = 0
-
-print result['saleCount']
 result.to_csv('result.csv',index=False)
 test_valid.to_csv('test_valid.csv',index=False)
 score_f = score(test_valid['saleCount'],result['saleCount'])
@@ -388,11 +396,11 @@ print "Total predictive score:{}".format(score_f)
 #                                # 'parCumtype','parClass',
 #                                # 'parHotPast1MonthIndex',
 #                                # 'dayOn21DayDiff',
-#                                # 'lastWeekSaleCount_mean',
+#                                'lastWeekSaleCount_mean',
 #                                # 'expweighted_14_avg',
 #                                'trend_7',
 #                                # 'expweighted_7_avg',
-#                                # 'classWeekdayRatio',
+#                                'classWeekdayRatio',
 #                                # 'parClassWeekdayRatio',
 #                                'moving_30_avg','expweighted_30_avg',
 #                                'moving_21_avg','expweighted_21_avg',
@@ -401,7 +409,7 @@ print "Total predictive score:{}".format(score_f)
 #                                # 'disholDaySaleCount_mean',
 #                                'disholDaySaleCount_max',
 #                                'last2WeekSaleCount_max','last3WeekSaleCount_max',
-#                                # 'Class',
+#                                'Class',
 #                                # 'parClass',
 #                                # 'holDaySaleCount_min',
 #                                # 'holDaySaleCount_min',
@@ -479,7 +487,7 @@ print "Total predictive score:{}".format(score_f)
 #         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
 #         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
 #         # if i%7 == 0 :
-#         #     model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+#         model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
 #         param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
 #         # print "Parameter score: "
 #         # print param_score
