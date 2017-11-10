@@ -1160,7 +1160,7 @@ def get_trend(train_test):
     train_test.loc[:,'expweighted_14_avg'] = 0
     # train_test.loc[:,'moving_14_avg'] = 0
     # train_test.loc[:,'trend_7'] = 0
-    # train_test.loc[:,'expweighted_7_avg'] = 0
+    train_test.loc[:,'expweighted_7_avg'] = 0
     # train_test.loc[:,'moving_7_avg'] = 0
     step_30 = 30
     step_14 = 14
@@ -1179,7 +1179,7 @@ def get_trend(train_test):
         # train_test['expweighted_30_avg'][train_test['Class'] == i] = expweighted_avg_30
         # train_test['moving_30_avg'][train_test['Class'] == i] = moving_avg_30
         # decomposition_7 = seasonal_decompose(var,freq = step_7)
-        # expweighted_avg_7 = pd.ewma(var,halflife= step_7)
+        expweighted_avg_7 = pd.ewma(var,halflife= step_7)
         # moving_avg_7 = pd.rolling_mean(var,step_7)
         # trend = decomposition_7.trend
         # train_test['trend_7'][train_test['Class'] == i] = trend
@@ -1241,12 +1241,12 @@ def get_trend(train_test):
     # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
     # train_test['trend_7'].fillna(0,inplace=True)
 
-    # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_7_avg'].mean()
-    # coord_shift = coord.shift(step_7)
-    # coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
-    # del train_test['expweighted_7_avg']
-    # train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
-    # train_test['expweighted_7_avg'].fillna(0,inplace=True)
+    coord = train_test.groupby(['Class','SaleDate'],as_index=False)['expweighted_7_avg'].mean()
+    coord_shift = coord.shift(step_7)
+    coord_shift[['Class','SaleDate']] = coord[['Class','SaleDate']]
+    del train_test['expweighted_7_avg']
+    train_test = pd.merge(train_test, coord_shift, on=['Class','SaleDate'], how='left')
+    train_test['expweighted_7_avg'].fillna(0,inplace=True)
 
     # coord = train_test.groupby(['Class','SaleDate'],as_index=False)['moving_7_avg'].mean()
     # coord_shift = coord.shift(step_7)
@@ -1262,228 +1262,281 @@ def get_roll_oneday_feats(train_test):
     #上周
     coord['last1d'] = coord.groupby('Class')['saleCount'].shift(1)
     coord['last1d'].fillna(method='bfill',inplace=True)
-    # coord['last2d'] = coord.groupby('Class')['last1d'].shift(1)
-    # coord['last2d'].fillna(method='bfill',inplace=True)
-    # coord['last3d'] = coord.groupby('Class')['last2d'].shift(1)
-    # coord['last3d'].fillna(method='bfill',inplace=True)
-    # coord['last4d'] = coord.groupby('Class')['last3d'].shift(1)
-    # coord['last4d'].fillna(method='bfill',inplace=True)
-    # coord['last5d'] = coord.groupby('Class')['last4d'].shift(1)
-    # coord['last5d'].fillna(method='bfill',inplace=True)
-    # coord['last6d'] = coord.groupby('Class')['last5d'].shift(1)
-    # coord['last6d'].fillna(method='bfill',inplace=True)
-    # coord['last7d'] = coord.groupby('Class')['last6d'].shift(1)
-    # coord['last7d'].fillna(method='bfill',inplace=True)
-    # coord.loc[:,'last1wTot'] = coord['last1d']+coord['last2d']+coord['last3d']+coord['last4d']+coord['last5d']+coord['last6d']+coord['last7d']
-    #
-    # #上2周
-    # coord['last8d'] = coord.groupby('Class')['last7d'].shift(1)
-    # coord['last8d'].fillna(method='bfill',inplace=True)
-    # coord['last9d'] = coord.groupby('Class')['last8d'].shift(1)
-    # coord['last9d'].fillna(method='bfill',inplace=True)
-    # coord['last10d'] = coord.groupby('Class')['last9d'].shift(1)
-    # coord['last10d'].fillna(method='bfill',inplace=True)
-    # coord['last11d'] = coord.groupby('Class')['last10d'].shift(1)
-    # coord['last11d'].fillna(method='bfill',inplace=True)
-    # coord['last12d'] = coord.groupby('Class')['last11d'].shift(1)
-    # coord['last12d'].fillna(method='bfill',inplace=True)
-    # coord['last13d'] = coord.groupby('Class')['last12d'].shift(1)
-    # coord['last13d'].fillna(method='bfill',inplace=True)
-    # coord['last14d'] = coord.groupby('Class')['last13d'].shift(1)
-    # coord['last14d'].fillna(method='bfill',inplace=True)
-    # coord.loc[:,'last2wTot'] = coord['last8d']+coord['last9d']+coord['last10d']+coord['last11d']+coord['last12d']+coord['last13d']+coord['last14d']
-    #
-    # #上3周
-    # coord['last15d'] = coord.groupby('Class')['last14d'].shift(1)
-    # coord['last15d'].fillna(method='bfill',inplace=True)
-    # coord['last16d'] = coord.groupby('Class')['last15d'].shift(1)
-    # coord['last16d'].fillna(method='bfill',inplace=True)
-    # coord['last17d'] = coord.groupby('Class')['last16d'].shift(1)
-    # coord['last17d'].fillna(method='bfill',inplace=True)
-    # coord['last18d'] = coord.groupby('Class')['last17d'].shift(1)
-    # coord['last18d'].fillna(method='bfill',inplace=True)
-    # coord['last19d'] = coord.groupby('Class')['last18d'].shift(1)
-    # coord['last19d'].fillna(method='bfill',inplace=True)
-    # coord['last20d'] = coord.groupby('Class')['last19d'].shift(1)
-    # coord['last20d'].fillna(method='bfill',inplace=True)
-    # coord['last21d'] = coord.groupby('Class')['last20d'].shift(1)
-    # coord['last21d'].fillna(method='bfill',inplace=True)
-    # coord.loc[:,'last3wTot'] = coord['last15d']+coord['last16d']+coord['last17d']+coord['last18d']+coord['last19d']+coord['last20d']+coord['last21d']
-    #
-    # #上4周
-    # coord['last22d'] = coord.groupby('Class')['last21d'].shift(1)
-    # coord['last22d'].fillna(method='bfill',inplace=True)
-    # coord['last23d'] = coord.groupby('Class')['last22d'].shift(1)
-    # coord['last23d'].fillna(method='bfill',inplace=True)
-    # coord['last24d'] = coord.groupby('Class')['last23d'].shift(1)
-    # coord['last24d'].fillna(method='bfill',inplace=True)
-    # coord['last25d'] = coord.groupby('Class')['last24d'].shift(1)
-    # coord['last25d'].fillna(method='bfill',inplace=True)
-    # coord['last26d'] = coord.groupby('Class')['last25d'].shift(1)
-    # coord['last26d'].fillna(method='bfill',inplace=True)
-    # coord['last27d'] = coord.groupby('Class')['last26d'].shift(1)
-    # coord['last27d'].fillna(method='bfill',inplace=True)
-    # coord['last28d'] = coord.groupby('Class')['last27d'].shift(1)
-    # coord['last28d'].fillna(method='bfill',inplace=True)
-    # coord.loc[:,'last4wTot'] = coord['last22d']+coord['last23d']+coord['last24d']+coord['last25d']+coord['last26d']+coord['last27d']+coord['last28d']
-    #
-    #
-    # #dif天数
-    # # coord.loc[:,'diff2d'] = coord['last1d'] - coord['last3d']
-    # # coord.loc[:,'diff3d'] = coord['last1d'] - coord['last4d']
-    # # coord.loc[:,'diff4d'] = coord['last1d'] - coord['last5d']
-    # # coord.loc[:,'diff5d'] = coord['last1d'] - coord['last6d']
-    # # coord.loc[:,'diff6d'] = coord['last1d'] - coord['last7d']
-    # # coord.loc[:,'diff7d'] = coord['last1d'] - coord['last8d']
-    # # coord.loc[:,'diff14d'] = coord['last1d'] - coord['last15d']
-    # # coord.loc[:,'diff21d'] = coord['last1d'] - coord['last22d']
-    #
-    # #dif周
-    # coord.loc[:,'diff2w'] = coord['last1wTot'] - coord['last2wTot']
-    # coord.loc[:,'diff3w'] = coord['last1wTot'] - coord['last3wTot']
-    # coord.loc[:,'diff4w'] = coord['last1wTot'] - coord['last4wTot']
-    # coord.loc[:,'diff2wRate'] = coord['diff2w'] / (1.0 * coord['last2wTot'] + 1)
-    # coord.loc[:,'diff3wRate'] = coord['diff3w'] / (1.0 * coord['last3wTot'] + 1)
-    # coord.loc[:,'diff4wRate'] = coord['diff4w'] / (1.0 * coord['last4wTot'] + 1)
-    #
-    # #1，2阶差分
-    # coord.loc[:,'diff_1'] = coord['last1d'] - coord.groupby('Class')['last1d'].shift(1)
-    # coord.loc[:,'diff_1'].fillna(0,inplace=True)
-    # coord.loc[:,'diff_2'] = coord['diff_1'] - coord.groupby('Class')['diff_1'].shift(1)
-    # coord.loc[:,'diff_2'].fillna(0,inplace=True)
-    #
-    # roll7_mean = coord.groupby(['Class'])['last1d'].rolling(7).mean().reset_index()
-    # roll7_mean['last1d'] = roll7_mean.groupby('Class')['last1d'].shift(1)
-    # roll7_mean['last1d'].fillna(method='bfill',inplace=True)
-    # roll7_mean.rename(columns={'last1d':'last7d_mean'},inplace=True)
-    #
-    # roll7_std = coord.groupby(['Class'])['last1d'].rolling(7).std().reset_index()
-    # roll7_std['last1d'] = roll7_std.groupby('Class')['last1d'].shift(1)
-    # roll7_std['last1d'].fillna(method='bfill',inplace=True)
-    # roll7_std.rename(columns={'last1d':'last7d_std'},inplace=True)
-    #
-    # roll7_median = coord.groupby(['Class'])['last1d'].rolling(7).median().reset_index()
-    # roll7_median['last1d'] = roll7_median.groupby('Class')['last1d'].shift(1)
-    # roll7_median['last1d'].fillna(method='bfill',inplace=True)
-    # roll7_median.rename(columns={'last1d':'last7d_median'},inplace=True)
-    #
-    # roll7_max = coord.groupby(['Class'])['last1d'].rolling(7).max().reset_index()
-    # roll7_max['last1d'] = roll7_max.groupby('Class')['last1d'].shift(1)
-    # roll7_max['last1d'].fillna(method='bfill',inplace=True)
-    # roll7_max.rename(columns={'last1d':'last7d_max'},inplace=True)
-    #
-    # roll14_mean = coord.groupby(['Class'])['last1d'].rolling(14).mean().reset_index()
-    # roll14_mean['last1d'] = roll14_mean.groupby('Class')['last1d'].shift(1)
-    # roll14_mean['last1d'].fillna(method='bfill',inplace=True)
-    # roll14_mean.rename(columns={'last1d':'last14d_mean'},inplace=True)
-    #
-    # roll14_std = coord.groupby(['Class'])['last1d'].rolling(14).std().reset_index()
-    # roll14_std['last1d'] = roll14_std.groupby('Class')['last1d'].shift(1)
-    # roll14_std['last1d'].fillna(method='bfill',inplace=True)
-    # roll14_std.rename(columns={'last1d':'last14d_std'},inplace=True)
-    #
-    # roll14_median = coord.groupby(['Class'])['last1d'].rolling(14).median().reset_index()
-    # roll14_median['last1d'] = roll14_median.groupby('Class')['last1d'].shift(1)
-    # roll14_median['last1d'].fillna(method='bfill',inplace=True)
-    # roll14_median.rename(columns={'last1d':'last14d_median'},inplace=True)
-    #
-    # roll14_max = coord.groupby(['Class'])['last1d'].rolling(14).max().reset_index()
-    # roll14_max['last1d'] = roll14_max.groupby('Class')['last1d'].shift(1)
-    # roll14_max['last1d'].fillna(method='bfill',inplace=True)
-    # roll14_max.rename(columns={'last1d':'last14d_max'},inplace=True)
-    #
-    # roll21_mean = coord.groupby(['Class'])['last1d'].rolling(21).mean().reset_index()
-    # roll21_mean['last1d'] = roll21_mean.groupby('Class')['last1d'].shift(1)
-    # roll21_mean['last1d'].fillna(method='bfill',inplace=True)
-    # roll21_mean.rename(columns={'last1d':'last21d_mean'},inplace=True)
-    #
-    # roll21_std = coord.groupby(['Class'])['last1d'].rolling(21).std().reset_index()
-    # roll21_std['last1d'] = roll21_std.groupby('Class')['last1d'].shift(1)
-    # roll21_std['last1d'].fillna(method='bfill',inplace=True)
-    # roll21_std.rename(columns={'last1d':'last21d_std'},inplace=True)
-    #
-    # roll21_median = coord.groupby(['Class'])['last1d'].rolling(21).median().reset_index()
-    # roll21_median['last1d'] = roll21_median.groupby('Class')['last1d'].shift(1)
-    # roll21_median['last1d'].fillna(method='bfill',inplace=True)
-    # roll21_median.rename(columns={'last1d':'last21d_median'},inplace=True)
-    #
-    # roll21_max = coord.groupby(['Class'])['last1d'].rolling(21).max().reset_index()
-    # roll21_max['last1d'] = roll21_max.groupby('Class')['last1d'].shift(1)
-    # roll21_max['last1d'].fillna(method='bfill',inplace=True)
-    # roll21_max.rename(columns={'last1d':'last21d_max'},inplace=True)
-    #
-    # roll30_mean = coord.groupby(['Class'])['last1d'].rolling(30).mean().reset_index()
-    # roll30_mean['last1d'] = roll30_mean.groupby('Class')['last1d'].shift(1)
-    # roll30_mean['last1d'].fillna(method='bfill',inplace=True)
-    # roll30_mean.rename(columns={'last1d':'last30d_mean'},inplace=True)
-    #
-    # roll30_std = coord.groupby(['Class'])['last1d'].rolling(30).std().reset_index()
-    # roll30_std['last1d'] = roll30_std.groupby('Class')['last1d'].shift(1)
-    # roll30_std['last1d'].fillna(method='bfill',inplace=True)
-    # roll30_std.rename(columns={'last1d':'last30d_std'},inplace=True)
-    #
-    # roll30_median = coord.groupby(['Class'])['last1d'].rolling(30).median().reset_index()
-    # roll30_median['last1d'] = roll30_median.groupby('Class')['last1d'].shift(1)
-    # roll30_median['last1d'].fillna(method='bfill',inplace=True)
-    # roll30_median.rename(columns={'last1d':'last30d_median'},inplace=True)
-    #
-    # roll30_max = coord.groupby(['Class'])['last1d'].rolling(30).max().reset_index()
-    # roll30_max['last1d'] = roll30_max.groupby('Class')['last1d'].shift(1)
-    # roll30_max['last1d'].fillna(method='bfill',inplace=True)
-    # roll30_max.rename(columns={'last1d':'last30d_max'},inplace=True)
-    #
-    # coord.loc[:,'last7d_mean'] = roll7_mean['last7d_mean']
-    # # coord.loc[:,'last7d_std'] = roll7_std['last7d_std']
-    # coord.loc[:,'last7d_median'] = roll7_median['last7d_median']
-    # # coord.loc[:,'last7d_max'] = roll7_max['last7d_max']
-    # coord.loc[:,'last14d_mean'] = roll14_mean['last14d_mean']
-    # # coord.loc[:,'last14d_std'] = roll14_std['last14d_std']
-    # coord.loc[:,'last14d_median'] = roll14_median['last14d_median']
-    # # coord.loc[:,'last14d_max'] = roll14_max['last14d_max']
-    # coord.loc[:,'last21d_mean'] = roll21_mean['last21d_mean']
-    # # coord.loc[:,'last21d_std'] = roll21_std['last21d_std']
-    # coord.loc[:,'last21d_median'] = roll21_median['last21d_median']
-    # # coord.loc[:,'last21d_max'] = roll21_max['last21d_max']
-    # # coord.loc[:,'last30d_mean'] = roll30_mean['last30d_mean']
-    # # coord.loc[:,'last30d_std'] = roll30_std['last30d_std']
-    # coord.loc[:,'last30d_median'] = roll30_median['last30d_median']
-    # # coord.loc[:,'last30d_max'] = roll30_max['last30d_max']
-    #
-    #
-    # #鲁棒值
-    # coord.loc[:,'last7d_div_median'] = coord['last1d'] / (1.0 * coord['last7d_median'] + 0.01) * coord['last7d_mean']
-    # coord.loc[:,'last7d_div_mean'] = coord['last1d'] / (1.0 * coord['last7d_mean'] + 0.01)
-    # coord.loc[:,'last14d_div_median'] = coord['last1d'] / (1.0 * coord['last14d_median'] + 0.01) * coord['last14d_mean']
-    # coord.loc[:,'last14d_div_mean'] = coord['last1d'] / (1.0 * coord['last14d_mean'] + 0.01)
-    # coord.loc[:,'last21d_div_median'] = coord['last1d'] / (1.0 * coord['last21d_median'] + 0.01) * coord['last21d_mean']
-    # coord.loc[:,'last21d_div_mean'] = coord['last1d'] / (1.0 * coord['last21d_mean'] + 0.01)
-    #
-    # coord.loc[:,'daySale_pct'] = coord.groupby('Class')['last1d'].pct_change(period=1)
-    # coord.fillna(0,inplace=True)
-    # coord['daySale_pct'][np.isnan(coord['daySale_pct'])] = 0
-    #
-    # coord.loc[:,'last1dTo1wRate'] = coord['last1d'] / (1.0 * coord['last1wTot'] + 0.1)
-    # coord.loc[:,'last2dTo2wRate'] = (coord['last1d'] + coord['last2d']) / (1.0 * (coord['last1wTot'] + coord['last2wTot']) + 0.1)
-    # coord.loc[:,'last3dTo3wRate'] = (coord['last1d'] + coord['last2d'] + coord['last3d']) / (1.0 * (coord['last1wTot'] + coord['last2wTot'] + coord['last3wTot']) + 0.1)
-    # coord.loc[:,'last4dTo4wRate'] = (coord['last1d'] + coord['last2d'] + coord['last3d'] + coord['last4d']) / (1.0 * (coord['last1wTot'] + coord['last2wTot'] + coord['last3wTot'] + coord['last4wTot']) + 0.1)
-    #
-    # # del coord['last1d']
-    # del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last7d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d'],coord['last14d']
-    # del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last21d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d'],coord['last28d']
-    # # del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d']
-    # # del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d']
-    # del coord['last4wTot'],coord['last3wTot'],coord['last2wTot'],coord['last1wTot'],coord['diff2w'],coord['diff3w'],coord['diff4w']
-    # del roll7_mean['last7d_mean'],roll14_mean['last14d_mean'],roll21_mean['last21d_mean']
+    coord['last2d'] = coord.groupby('Class')['last1d'].shift(1)
+    coord['last2d'].fillna(method='bfill',inplace=True)
+    coord['last3d'] = coord.groupby('Class')['last2d'].shift(1)
+    coord['last3d'].fillna(method='bfill',inplace=True)
+    coord['last4d'] = coord.groupby('Class')['last3d'].shift(1)
+    coord['last4d'].fillna(method='bfill',inplace=True)
+    coord['last5d'] = coord.groupby('Class')['last4d'].shift(1)
+    coord['last5d'].fillna(method='bfill',inplace=True)
+    coord['last6d'] = coord.groupby('Class')['last5d'].shift(1)
+    coord['last6d'].fillna(method='bfill',inplace=True)
+    coord['last7d'] = coord.groupby('Class')['last6d'].shift(1)
+    coord['last7d'].fillna(method='bfill',inplace=True)
+    coord.loc[:,'last1wTot'] = coord['last1d']+coord['last2d']+coord['last3d']+coord['last4d']+coord['last5d']+coord['last6d']+coord['last7d']
+    coord.loc[:,'last1wMean'] = (coord['last1d']+coord['last2d']+coord['last3d']+coord['last4d']+coord['last5d']+coord['last6d']+coord['last7d'])/7
+
+    #上2周
+    coord['last8d'] = coord.groupby('Class')['last7d'].shift(1)
+    coord['last8d'].fillna(method='bfill',inplace=True)
+    coord['last9d'] = coord.groupby('Class')['last8d'].shift(1)
+    coord['last9d'].fillna(method='bfill',inplace=True)
+    coord['last10d'] = coord.groupby('Class')['last9d'].shift(1)
+    coord['last10d'].fillna(method='bfill',inplace=True)
+    coord['last11d'] = coord.groupby('Class')['last10d'].shift(1)
+    coord['last11d'].fillna(method='bfill',inplace=True)
+    coord['last12d'] = coord.groupby('Class')['last11d'].shift(1)
+    coord['last12d'].fillna(method='bfill',inplace=True)
+    coord['last13d'] = coord.groupby('Class')['last12d'].shift(1)
+    coord['last13d'].fillna(method='bfill',inplace=True)
+    coord['last14d'] = coord.groupby('Class')['last13d'].shift(1)
+    coord['last14d'].fillna(method='bfill',inplace=True)
+    coord.loc[:,'last2wTot'] = coord['last8d']+coord['last9d']+coord['last10d']+coord['last11d']+coord['last12d']+coord['last13d']+coord['last14d']
+    coord.loc[:,'last2wMean'] = (coord['last8d']+coord['last9d']+coord['last10d']+coord['last11d']+coord['last12d']+coord['last13d']+coord['last14d'])/7
+
+    #上3周
+    coord['last15d'] = coord.groupby('Class')['last14d'].shift(1)
+    coord['last15d'].fillna(method='bfill',inplace=True)
+    coord['last16d'] = coord.groupby('Class')['last15d'].shift(1)
+    coord['last16d'].fillna(method='bfill',inplace=True)
+    coord['last17d'] = coord.groupby('Class')['last16d'].shift(1)
+    coord['last17d'].fillna(method='bfill',inplace=True)
+    coord['last18d'] = coord.groupby('Class')['last17d'].shift(1)
+    coord['last18d'].fillna(method='bfill',inplace=True)
+    coord['last19d'] = coord.groupby('Class')['last18d'].shift(1)
+    coord['last19d'].fillna(method='bfill',inplace=True)
+    coord['last20d'] = coord.groupby('Class')['last19d'].shift(1)
+    coord['last20d'].fillna(method='bfill',inplace=True)
+    coord['last21d'] = coord.groupby('Class')['last20d'].shift(1)
+    coord['last21d'].fillna(method='bfill',inplace=True)
+    coord.loc[:,'last3wTot'] = coord['last15d']+coord['last16d']+coord['last17d']+coord['last18d']+coord['last19d']+coord['last20d']+coord['last21d']
+    coord.loc[:,'last3wMean'] = (coord['last15d']+coord['last16d']+coord['last17d']+coord['last18d']+coord['last19d']+coord['last20d']+coord['last21d'])/7
+
+    #上4周
+    coord['last22d'] = coord.groupby('Class')['last21d'].shift(1)
+    coord['last22d'].fillna(method='bfill',inplace=True)
+    coord['last23d'] = coord.groupby('Class')['last22d'].shift(1)
+    coord['last23d'].fillna(method='bfill',inplace=True)
+    coord['last24d'] = coord.groupby('Class')['last23d'].shift(1)
+    coord['last24d'].fillna(method='bfill',inplace=True)
+    coord['last25d'] = coord.groupby('Class')['last24d'].shift(1)
+    coord['last25d'].fillna(method='bfill',inplace=True)
+    coord['last26d'] = coord.groupby('Class')['last25d'].shift(1)
+    coord['last26d'].fillna(method='bfill',inplace=True)
+    coord['last27d'] = coord.groupby('Class')['last26d'].shift(1)
+    coord['last27d'].fillna(method='bfill',inplace=True)
+    coord['last28d'] = coord.groupby('Class')['last27d'].shift(1)
+    coord['last28d'].fillna(method='bfill',inplace=True)
+    coord.loc[:,'last4wTot'] = coord['last22d']+coord['last23d']+coord['last24d']+coord['last25d']+coord['last26d']+coord['last27d']+coord['last28d']
+    coord.loc[:,'last4wMean'] = (coord['last22d']+coord['last23d']+coord['last24d']+coord['last25d']+coord['last26d']+coord['last27d']+coord['last28d'])/7
+
+    coord['last29d'] = coord.groupby('Class')['last28d'].shift(1)
+    coord['last29d'].fillna(method='bfill',inplace=True)
+    coord['last30d'] = coord.groupby('Class')['last29d'].shift(1)
+    coord['last30d'].fillna(method='bfill',inplace=True)
+    coord['last31d'] = coord.groupby('Class')['last30d'].shift(1)
+    coord['last31d'].fillna(method='bfill',inplace=True)
+
+
+    #dif天数
+    # coord.loc[:,'diff2d'] = coord['last1d'] - coord['last3d']
+    # coord.loc[:,'diff3d'] = coord['last1d'] - coord['last4d']
+    # coord.loc[:,'diff4d'] = coord['last1d'] - coord['last5d']
+    # coord.loc[:,'diff5d'] = coord['last1d'] - coord['last6d']
+    # coord.loc[:,'diff6d'] = coord['last1d'] - coord['last7d']
+    # coord.loc[:,'diff7d'] = coord['last1d'] - coord['last8d']
+    # coord.loc[:,'diff14d'] = coord['last1d'] - coord['last15d']
+    # coord.loc[:,'diff21d'] = coord['last1d'] - coord['last22d']
+
+    #dif周
+    coord.loc[:,'diff2w'] = coord['last1wTot'] - coord['last2wTot']
+    coord.loc[:,'diff3w'] = coord['last1wTot'] - coord['last3wTot']
+    coord.loc[:,'diff4w'] = coord['last1wTot'] - coord['last4wTot']
+    coord.loc[:,'diff2wRate'] = coord['diff2w'] / (1.0 * coord['last2wTot'] + 1)
+    coord.loc[:,'diff3wRate'] = coord['diff3w'] / (1.0 * coord['last3wTot'] + 1)
+    coord.loc[:,'diff4wRate'] = coord['diff4w'] / (1.0 * coord['last4wTot'] + 1)
+    coord.loc[:,'diff2wRate_mean'] = (coord['last1wMean'] - coord['last2wMean']) / (1.0 * coord['last2wMean'] + 1)
+    coord.loc[:,'diff3wRate_mean'] = (coord['last1wMean'] - coord['last3wMean']) / (1.0 * coord['last3wMean'] + 1)
+    coord.loc[:,'diff4wRate_mean'] = (coord['last1wMean'] - coord['last4wMean']) / (1.0 * coord['last4wMean'] + 1)
+
+    coord.loc[:,'diffRoll2w'] = coord['last1wTot'] - coord['last2wTot']
+    coord.loc[:,'diffRoll3w'] = coord['last2wTot'] - coord['last3wTot']
+    coord.loc[:,'diffRoll4w'] = coord['last3wTot'] - coord['last4wTot']
+    coord.loc[:,'diffRoll2wRate'] = coord['diffRoll2w'] / (1.0 * coord['last2wTot'] + 1)
+    coord.loc[:,'diffRoll3wRate'] = coord['diffRoll3w'] / (1.0 * coord['last3wTot'] + 1)
+    coord.loc[:,'diffRoll4wRate'] = coord['diffRoll4w'] / (1.0 * coord['last4wTot'] + 1)
+    coord.loc[:,'diffRoll2wRate_mean'] = (coord['last1wMean'] - coord['last2wMean']) / (1.0 * coord['last2wMean'] + 1)
+    coord.loc[:,'diffRoll3wRate_mean'] = (coord['last2wMean'] - coord['last3wMean']) / (1.0 * coord['last3wMean'] + 1)
+    coord.loc[:,'diffRoll4wRate_mean'] = (coord['last3wMean'] - coord['last4wMean']) / (1.0 * coord['last4wMean'] + 1)
+
+    #1，2阶差分
+    coord.loc[:,'diff_1'] = coord['last1d'] - coord.groupby('Class')['last1d'].shift(1)
+    coord.loc[:,'diff_1'].fillna(0,inplace=True)
+    coord.loc[:,'diff_2'] = coord['diff_1'] - coord.groupby('Class')['diff_1'].shift(1)
+    coord.loc[:,'diff_2'].fillna(0,inplace=True)
+
+    roll7_mean = coord.groupby(['Class'])['last1d'].rolling(7).mean().reset_index()
+    roll7_mean['last1d'] = roll7_mean.groupby('Class')['last1d'].shift(1)
+    roll7_mean['last1d'].fillna(method='bfill',inplace=True)
+    roll7_mean.rename(columns={'last1d':'last7d_mean'},inplace=True)
+
+    roll7_std = coord.groupby(['Class'])['last1d'].rolling(7).std().reset_index()
+    roll7_std['last1d'] = roll7_std.groupby('Class')['last1d'].shift(1)
+    roll7_std['last1d'].fillna(method='bfill',inplace=True)
+    roll7_std.rename(columns={'last1d':'last7d_std'},inplace=True)
+
+    roll7_median = coord.groupby(['Class'])['last1d'].rolling(7).median().reset_index()
+    roll7_median['last1d'] = roll7_median.groupby('Class')['last1d'].shift(1)
+    roll7_median['last1d'].fillna(method='bfill',inplace=True)
+    roll7_median.rename(columns={'last1d':'last7d_median'},inplace=True)
+
+    roll7_max = coord.groupby(['Class'])['last1d'].rolling(7).max().reset_index()
+    roll7_max['last1d'] = roll7_max.groupby('Class')['last1d'].shift(1)
+    roll7_max['last1d'].fillna(method='bfill',inplace=True)
+    roll7_max.rename(columns={'last1d':'last7d_max'},inplace=True)
+
+    roll14_mean = coord.groupby(['Class'])['last1d'].rolling(14).mean().reset_index()
+    roll14_mean['last1d'] = roll14_mean.groupby('Class')['last1d'].shift(1)
+    roll14_mean['last1d'].fillna(method='bfill',inplace=True)
+    roll14_mean.rename(columns={'last1d':'last14d_mean'},inplace=True)
+
+    roll14_std = coord.groupby(['Class'])['last1d'].rolling(14).std().reset_index()
+    roll14_std['last1d'] = roll14_std.groupby('Class')['last1d'].shift(1)
+    roll14_std['last1d'].fillna(method='bfill',inplace=True)
+    roll14_std.rename(columns={'last1d':'last14d_std'},inplace=True)
+
+    roll14_median = coord.groupby(['Class'])['last1d'].rolling(14).median().reset_index()
+    roll14_median['last1d'] = roll14_median.groupby('Class')['last1d'].shift(1)
+    roll14_median['last1d'].fillna(method='bfill',inplace=True)
+    roll14_median.rename(columns={'last1d':'last14d_median'},inplace=True)
+
+    roll14_max = coord.groupby(['Class'])['last1d'].rolling(14).max().reset_index()
+    roll14_max['last1d'] = roll14_max.groupby('Class')['last1d'].shift(1)
+    roll14_max['last1d'].fillna(method='bfill',inplace=True)
+    roll14_max.rename(columns={'last1d':'last14d_max'},inplace=True)
+
+    roll21_mean = coord.groupby(['Class'])['last1d'].rolling(21).mean().reset_index()
+    roll21_mean['last1d'] = roll21_mean.groupby('Class')['last1d'].shift(1)
+    roll21_mean['last1d'].fillna(method='bfill',inplace=True)
+    roll21_mean.rename(columns={'last1d':'last21d_mean'},inplace=True)
+
+    roll21_std = coord.groupby(['Class'])['last1d'].rolling(21).std().reset_index()
+    roll21_std['last1d'] = roll21_std.groupby('Class')['last1d'].shift(1)
+    roll21_std['last1d'].fillna(method='bfill',inplace=True)
+    roll21_std.rename(columns={'last1d':'last21d_std'},inplace=True)
+
+    roll21_median = coord.groupby(['Class'])['last1d'].rolling(21).median().reset_index()
+    roll21_median['last1d'] = roll21_median.groupby('Class')['last1d'].shift(1)
+    roll21_median['last1d'].fillna(method='bfill',inplace=True)
+    roll21_median.rename(columns={'last1d':'last21d_median'},inplace=True)
+
+    roll21_max = coord.groupby(['Class'])['last1d'].rolling(21).max().reset_index()
+    roll21_max['last1d'] = roll21_max.groupby('Class')['last1d'].shift(1)
+    roll21_max['last1d'].fillna(method='bfill',inplace=True)
+    roll21_max.rename(columns={'last1d':'last21d_max'},inplace=True)
+
+    roll30_mean = coord.groupby(['Class'])['last1d'].rolling(30).mean().reset_index()
+    roll30_mean['last1d'] = roll30_mean.groupby('Class')['last1d'].shift(1)
+    roll30_mean['last1d'].fillna(method='bfill',inplace=True)
+    roll30_mean.rename(columns={'last1d':'last30d_mean'},inplace=True)
+
+    roll30_std = coord.groupby(['Class'])['last1d'].rolling(30).std().reset_index()
+    roll30_std['last1d'] = roll30_std.groupby('Class')['last1d'].shift(1)
+    roll30_std['last1d'].fillna(method='bfill',inplace=True)
+    roll30_std.rename(columns={'last1d':'last30d_std'},inplace=True)
+
+    roll30_median = coord.groupby(['Class'])['last1d'].rolling(30).median().reset_index()
+    roll30_median['last1d'] = roll30_median.groupby('Class')['last1d'].shift(1)
+    roll30_median['last1d'].fillna(method='bfill',inplace=True)
+    roll30_median.rename(columns={'last1d':'last30d_median'},inplace=True)
+
+    roll30_max = coord.groupby(['Class'])['last1d'].rolling(30).max().reset_index()
+    roll30_max['last1d'] = roll30_max.groupby('Class')['last1d'].shift(1)
+    roll30_max['last1d'].fillna(method='bfill',inplace=True)
+    roll30_max.rename(columns={'last1d':'last30d_max'},inplace=True)
+
+    coord.loc[:,'last7d_mean'] = roll7_mean['last7d_mean']
+    # coord.loc[:,'last7d_std'] = roll7_std['last7d_std']
+    coord.loc[:,'last7d_median'] = roll7_median['last7d_median']
+    # coord.loc[:,'last7d_max'] = roll7_max['last7d_max']
+    coord.loc[:,'last14d_mean'] = roll14_mean['last14d_mean']
+    # coord.loc[:,'last14d_std'] = roll14_std['last14d_std']
+    coord.loc[:,'last14d_median'] = roll14_median['last14d_median']
+    # coord.loc[:,'last14d_max'] = roll14_max['last14d_max']
+    coord.loc[:,'last21d_mean'] = roll21_mean['last21d_mean']
+    # coord.loc[:,'last21d_std'] = roll21_std['last21d_std']
+    coord.loc[:,'last21d_median'] = roll21_median['last21d_median']
+    # coord.loc[:,'last21d_max'] = roll21_max['last21d_max']
+    coord.loc[:,'last30d_mean'] = roll30_mean['last30d_mean']
+    # coord.loc[:,'last30d_std'] = roll30_std['last30d_std']
+    coord.loc[:,'last30d_median'] = roll30_median['last30d_median']
+    # coord.loc[:,'last30d_max'] = roll30_max['last30d_max']
+
+
+    #鲁棒值
+    coord.loc[:,'last7d_div_median'] = coord['last1d'] / (1.0 * coord['last7d_median'] + 0.01) * coord['last7d_mean']
+    coord.loc[:,'last7d_div_mean'] = coord['last1d'] / (1.0 * coord['last7d_mean'] + 0.01)
+    coord.loc[:,'last14d_div_median'] = coord['last1d'] / (1.0 * coord['last14d_median'] + 0.01) * coord['last14d_mean']
+    coord.loc[:,'last14d_div_mean'] = coord['last1d'] / (1.0 * coord['last14d_mean'] + 0.01)
+    coord.loc[:,'last21d_div_median'] = coord['last1d'] / (1.0 * coord['last21d_median'] + 0.01) * coord['last21d_mean']
+    coord.loc[:,'last21d_div_mean'] = coord['last1d'] / (1.0 * coord['last21d_mean'] + 0.01)
+
+    coord.loc[:,'daySale_pct'] = coord.groupby('Class')['last1d'].pct_change(period=1)
+    coord.fillna(0,inplace=True)
+    coord['daySale_pct'][np.isinf(coord['daySale_pct'])] = 0
+
+    coord.loc[:,'last1dOn7'] = (coord['last1d'] - coord['last8d'])
+    coord.loc[:,'last1dOn14'] = (coord['last1d'] - coord['last15d'])
+    coord.loc[:,'last1dOn21'] = (coord['last1d'] - coord['last22d'])
+    coord.loc[:,'last1dOn28'] = (coord['last1d'] - coord['last29d'])
+    coord.loc[:,'last7dOn14'] = (coord['last7d'] - coord['last15d'])
+    coord.loc[:,'last14dOn21'] = (coord['last14d'] - coord['last22d'])
+    coord.loc[:,'last21On28'] = (coord['last21d'] - coord['last29d'])
+
+
+    # del coord['last1d']
+    del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last7d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d'],coord['last14d']
+    del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last21d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d'],coord['last28d'],coord['last29d'],coord['last30d'],coord['last31d']
+    # del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d']
+    # del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d']
+    del coord['last4wTot'],coord['last3wTot'],coord['last2wTot'],coord['last1wTot'],coord['diff2w'],coord['diff3w'],coord['diff4w']
+    del roll7_mean['last7d_mean'],roll14_mean['last14d_mean'],roll21_mean['last21d_mean']
     del coord['saleCount']
     train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
 
 
     # 获取趋势残差
     # train_test.loc[:,'residual_14'] = train_test['last1d'] - train_test['trend_14']
-    train_test.loc[:,'residual_trend_30'] = train_test['last1d'] - train_test['trend_30']
     # train_test.loc[:,'residual_exp_14'] = train_test['last1d'] - train_test['expweighted_14_avg']
 
+    train_test.loc[:,'residual_trend_30'] = train_test['last1d'] - train_test['trend_30']
+
     return train_test
+
+def get_roll_hol_feats(train_test):
+    coord =train_test.groupby(['Class','dayOfYear'],as_index=False)['disHoliday_detail'].agg({'disHolidayLast1d_detail':'mean'})
+    coord['disHolidayLast1d_detail'] = coord.groupby('Class')['disHolidayLast1d_detail'].shift(1)
+    coord['disHolidayLast1d_detail'].fillna(0,inplace=True)
+    train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
+    coord =train_test.groupby(['Class','disHolidayLast1d_detail'],as_index=False)['residual_trend_30'].agg({'residual_hol_last1d_30':'mean'})
+    train_test = pd.merge(train_test,coord,on=['Class','disHolidayLast1d_detail'],how='left')
+
+    coord =train_test.groupby(['Class','dayOfYear'],as_index=False)['disWorkday_detail'].agg({'disWorkdayLast1d_detail':'mean'})
+    coord['disWorkdayLast1d_detail'] = coord.groupby('Class')['disWorkdayLast1d_detail'].shift(1)
+    coord['disWorkdayLast1d_detail'].fillna(0,inplace=True)
+    train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
+    coord =train_test.groupby(['Class','disWorkdayLast1d_detail'],as_index=False)['residual_trend_30'].agg({'residual_wk_last1d_30':'mean'})
+    train_test = pd.merge(train_test,coord,on=['Class','disWorkdayLast1d_detail'],how='left')
+
+    coord =train_test.groupby(['Class','dayOfYear'],as_index=False)['disholDaySaleCount_mean'].agg({'disholDayLast1dSaleCount_mean':'mean'})
+    coord['disholDayLast1dSaleCount_mean'] = coord.groupby('Class')['disholDayLast1dSaleCount_mean'].shift(1)
+    coord['disholDayLast1dSaleCount_mean'].fillna(0,inplace=True)
+    train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
+
+
+    return train_test
+
 
 def get_roll_feats(train_test):
     l_feat_original = train_test.columns
@@ -1499,6 +1552,8 @@ def get_roll_feats(train_test):
     train_test = get_roll_diff_feats(train_test)
     # print "Roll differentiate features done."
     train_test = get_roll_oneday_feats(train_test)
+
+    train_test = get_roll_hol_feats(train_test)
     print "Rolling features done. "
     l_feat_new = train_test.columns
     l_roll_feats = np.setdiff1d(l_feat_new,l_feat_original)

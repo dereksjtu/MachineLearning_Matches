@@ -57,11 +57,19 @@ if __name__ == "__main__":
                 # '2015-04-22','2015-04-23','2015-04-24','2015-04-25','2015-04-26','2015-04-27','2015-04-28'],
                 # ['2015-04-29','2015-04-30']
 
+                #正常整4月预测
                 ['2015-04-01'],['2015-04-02'],['2015-04-03'],['2015-04-04'],['2015-04-05'],['2015-04-06'],['2015-04-07'],
                 ['2015-04-08'],['2015-04-10'],['2015-04-11'],['2015-04-12'],['2015-04-13'],['2015-04-14'],
                 ['2015-04-15'],['2015-04-17'],['2015-04-18'],['2015-04-19'],['2015-04-20'],['2015-04-21'],
                 ['2015-04-22'],['2015-04-23'],['2015-04-24'],['2015-04-25'],['2015-04-26'],['2015-04-27'],['2015-04-28'],
                 ['2015-04-29'],['2015-04-30']
+
+                #排除节前3天，即预测25天
+                # ['2015-04-04'],['2015-04-05'],['2015-04-06'],['2015-04-07'],
+                # ['2015-04-08'],['2015-04-10'],['2015-04-11'],['2015-04-12'],['2015-04-13'],['2015-04-14'],
+                # ['2015-04-15'],['2015-04-17'],['2015-04-18'],['2015-04-19'],['2015-04-20'],['2015-04-21'],
+                # ['2015-04-22'],['2015-04-23'],['2015-04-24'],['2015-04-25'],['2015-04-26'],['2015-04-27'],['2015-04-28'],
+                # ['2015-04-29'],['2015-04-30']
 
                 # ['2015-04-01','2015-04-02','2015-04-03','2015-04-04'],
                 # ['2015-04-05','2015-04-06','2015-04-07','2015-04-08'],
@@ -88,11 +96,22 @@ if __name__ == "__main__":
 
             ]
     month_4 = [
+                #正常整4月预测
                 '2015-04-01','2015-04-02','2015-04-03','2015-04-04','2015-04-05','2015-04-06','2015-04-07',
                 '2015-04-08','2015-04-09','2015-04-10','2015-04-11','2015-04-12','2015-04-13','2015-04-14',
                 '2015-04-15','2015-04-16','2015-04-17','2015-04-18','2015-04-19','2015-04-20','2015-04-21',
                 '2015-04-22','2015-04-23','2015-04-24','2015-04-25','2015-04-26','2015-04-27','2015-04-28',
                 '2015-04-29','2015-04-30'
+
+                #排除节前3天，即预测25天
+                # '2015-04-04','2015-04-05','2015-04-06','2015-04-07',
+                # '2015-04-08','2015-04-09','2015-04-10','2015-04-11','2015-04-12','2015-04-13','2015-04-14',
+                # '2015-04-15','2015-04-16','2015-04-17','2015-04-18','2015-04-19','2015-04-20','2015-04-21',
+                # '2015-04-22','2015-04-23','2015-04-24','2015-04-25','2015-04-26','2015-04-27','2015-04-28',
+                # '2015-04-29','2015-04-30'
+
+                #单独预测假日3天
+                # '2015-04-04','2015-04-05','2015-04-06'
             ]
     week_5 = [
                 # ['2015-05-01','2015-05-02','2015-05-03','2015-05-04','2015-05-05','2015-05-06','2015-05-07'],
@@ -168,10 +187,14 @@ if __name__ == "__main__":
 #     train_new_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
 #     train, train_new, test = get_origin_feats(train, train_new, test)
 #
+#     #训练日期
+#     start_date = '2015-01-01'
+#     end_date = '2015-04-01'
+#     # train_hol_dates = ['2015-01-01','2015-01-02','2015-01-03','2015-02-18','2015-02-19','2015-02-20','2015-02-21','2015-02-22','2015-02-23','2015-02-24']
+#     # train_hol_dates = ['2015-01-01','2015-01-02','2015-01-03','2015-02-18','2015-02-19','2015-02-20']
+#     # train_hol_dates = ['2015-01-01','2015-01-02','2015-01-03','2015-02-16','2015-02-17','2015-02-18','2015-02-19','2015-02-20','2015-02-21','2015-02-22','2015-02-23','2015-02-24','2015-04-29','2015-04-30']
 #
 #     # # 分离测试集
-#     start_date = '2015-01-01'
-#     # test_1, test_2, test_3, test_4, test_5 ,test = test_split(train_new, test, week_4)
 #     test_1 = test[test['SaleDate'].isin(week_4[0])]
 #     # 分离验证集
 #     # test_valid_1,test_valid_2,test_valid_3,test_valid_4,test_valid_5, test_valid = valid_split(train_new_o, week_4, month_4)
@@ -185,13 +208,15 @@ if __name__ == "__main__":
 #
 #
 #     train_feat = train_test[train_test['SaleDate'] >= start_date]    #使用二月份以后的数据
-#     train_feat_1 = train_feat[train_feat['SaleDate'] < '2015-04-01']   #训练集为2-3月份
+#     train_feat_1 = train_feat[train_feat['SaleDate'] < end_date]   #训练集为2-3月份
+#     #单独用假日预测
+#     # train_feat_1 = train_test[train_test['SaleDate'].isin(train_hol_dates)]   #训练集为2-3月份
 #
 #     #排除过年的异常值
 #     # exclude_date = ['2015-02-17','2015-02-18']
 #     # train_feat_1 = train_feat_1[~train_feat_1['SaleDate'].isin(exclude_date)]   #训练集为2-3月份
 #
-#     test_feat = train_test[train_test['SaleDate'] >= '2015-04-01']
+#     test_feat = train_test[train_test['SaleDate'] >= end_date]
 #     test_feat = test_feat[test_feat['SaleDate'] <= '2015-04-30'] #验证集为四月份
 #     test_feat.loc[:,'saleCount'] = 0
 #
@@ -224,15 +249,17 @@ if __name__ == "__main__":
 #                                'moving_14_avg',
 #                                'expweighted_14_avg',
 #                                'moving_7_avg',
-#                                'expweighted_7_avg',
+#                                # 'expweighted_7_avg',
 #                                # 'disholDaySaleCount_mean',
 #                                'disholDaySaleCount_max',
 #                                'last2WeekSaleCount_max','last3WeekSaleCount_max',
-#                                'Class',
+#                                # 'Class',
 #                                'last3wTot','last4wTot','last2wTot','last1wTot',
 #                                'last21d','last28d','last7d','last14d',
-#                                'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
-#                                'last1d',
+#                                # 'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
+#                                # 'last1d',
+#                                'last1wMean','last2wMean','last3wMean','last4wMean',
+#                                'last7d_mean','last7d_median','last14d_mean','last14d_median','last21d_mean','last21d_median','last30d_median'
 #                                # 'diff_2',
 #                                # 'parClass',
 #                                # 'holDaySaleCount_min',
@@ -248,7 +275,7 @@ if __name__ == "__main__":
 #     params = {'min_child_weight': 100, 'eta': 0.02, 'colsample_bytree': 0.3, 'max_depth': 7,
 #                 'subsample': 0.8, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
 #                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
-#     boostRound = 1000
+#     boostRound = 1200
 #
 #     # print train_feat_1[predictors]
 #
@@ -273,9 +300,17 @@ if __name__ == "__main__":
 #     # 第二轮
 #     # 特征2： 提取滚动特征
 #     # 4月2号 - 4月30号
+#
+#     #四月整月预测28天
+#     #排除节前3天，即预测25天
+#     # for i in range(1,25):
+#     # 单独用假日预测 4.4,4.5,4.6
+#     # for i in range(1,3):
 #     for i in range(1,28):
 #         # l_roll_feats = []
-#         train_test = train_test[train_test['SaleDate'] < '2015-04-01']
+#         train_test = train_test[train_test['SaleDate'] < end_date]
+#         # 单独用假日预测
+#         # train_test = train_test[train_test['SaleDate'].isin(train_hol_dates)]
 #         train_test = merge_train_test(train_test, test_feat_1)
 #         feats = [f for f in train_test.columns if f not in l_roll_feats]
 #         train_test = train_test[feats]
@@ -306,11 +341,10 @@ if __name__ == "__main__":
 #         # feature_names = list(train_feat_1.columns)
 #         # predictors = [f for f in feature_names if f not in do_not_use_for_training]
 #
-#         # train_feat_1 = exclude_abnormal_value(train_feat_1)
 #         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
 #         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
-#         # if i % 7 == 0:
-#         # model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+#         if i % 7 == 0:
+#             model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
 #
 #         test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
 #         result_i = test_feat_1[['Class','SaleDate','saleCount']]
@@ -336,15 +370,15 @@ if __name__ == "__main__":
 # print "Total predictive score:{}".format(score_f)
 #
 #
-# # # for further analyse
-# # l_index = []
-# # l_score = []
-# # for i in test_valid['Class'].unique():
-# #     score_1 = score(test_valid['saleCount'][test_valid['Class'] == i] ,result['saleCount'][result['Class'] == i])
-# #     l_index.append(i)
-# #     l_score.append(score_1)
-# # ser_score = pd.Series(l_score, index=l_index)
-# # ser_score.to_csv('ser_score.csv')
+# # for further analyse
+# l_index = []
+# l_score = []
+# for i in test_valid['Class'].unique():
+#     score_1 = score(test_valid['saleCount'][test_valid['Class'] == i] ,result['saleCount'][result['Class'] == i])
+#     l_index.append(i)
+#     l_score.append(score_1)
+# ser_score = pd.Series(l_score, index=l_index)
+# ser_score.to_csv('ser_score.csv')
 
 
 
@@ -366,6 +400,9 @@ if __name__ == "__main__":
 
     test_o.loc[:,'saleCount'] = 0
 
+    train_start = '2015-01-01'
+    train_end = '2015-04-28'
+
     # 特征1： 提取固定特征
     train, train_new, test = get_origin_feats(train_o, train_new_o, test_o)
     train_new = exclude_abnormal_value(train_new)
@@ -378,7 +415,7 @@ if __name__ == "__main__":
     train_test,l_roll_feats = get_roll_feats(train_test)
 
     train_feat = train_test[train_test['SaleDate'] >= '2015-01-01']    #使用二月份以后的数据
-    train_feat_1 = train_feat[train_feat['SaleDate'] < '2015-05-01']   #训练集为2-3月份
+    train_feat_1 = train_feat[train_feat['SaleDate'] < train_end]   #训练集为2-3月份
 
     test_feat = train_test[train_test['SaleDate'] >= '2015-05-01']
     test_feat = test_feat[test_feat['SaleDate'] <= '2015-05-31'] #验证集为四月份
@@ -412,15 +449,16 @@ if __name__ == "__main__":
                                'moving_14_avg',
                                'expweighted_14_avg',
                                'moving_7_avg',
-                               'expweighted_7_avg',
+                               # 'expweighted_7_avg',
                                # 'disholDaySaleCount_mean',
                                'disholDaySaleCount_max',
                                'last2WeekSaleCount_max','last3WeekSaleCount_max',
-                               'Class',
+                               # 'Class',
                                'last3wTot','last4wTot','last2wTot','last1wTot',
                                'last21d','last28d','last7d','last14d',
                                'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
-                               'last1d',
+                               # 'last1d',
+                               'last1wMean','last2wMean','last3wMean','last4wMean'
                                # 'diff_2',
                                # 'parClass',
                                # 'holDaySaleCount_min',
@@ -429,9 +467,11 @@ if __name__ == "__main__":
                                # 'holDaySaleCount_mean','month','parHotIndex','dayOn5DayDiff'
                                # 'last2d','last4d','last'
                                ]
+
+
     predictors = [f for f in feature_names if f not in do_not_use_for_training]
 
-    params = {'min_child_weight': 100, 'eta': 0.05, 'colsample_bytree': 0.3, 'max_depth': 7,
+    params = {'min_child_weight': 100, 'eta': 0.02, 'colsample_bytree': 0.3, 'max_depth': 7,
                 'subsample': 0.8, 'lambda': 1, 'nthread': 4, 'booster' : 'gbtree', 'silent': 1,
                 'eval_metric': 'rmse', 'objective': 'reg:linear'}
     boostRound = 1000
@@ -442,11 +482,14 @@ if __name__ == "__main__":
     param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
     print "Parameter score: "
     print param_score, len(predictors)
+    param_score.to_csv('param_score_train.csv')
     test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
     result = test_feat_1[['Class','SaleDate','saleCount']]
     test_valid_1 = test[test['SaleDate'].isin(week_5[0])]
     # test_valid_1.fillna(0,inplace=True)
     result = pd.merge(test_valid_1[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
+
+
     result.fillna(0,inplace=True)
     # print result
     # result['saleCount'][result['saleCount'] < 0] = 0
@@ -459,7 +502,7 @@ if __name__ == "__main__":
     # 4月2号 - 4月28号
     for i in range(1,30):
         # l_roll_feats = []
-        train_test = train_test[train_test['SaleDate'] < '2015-05-01']
+        train_test = train_test[train_test['SaleDate'] < train_end]
         train_test = merge_train_test(train_test, test_feat_1)
         feats = [f for f in train_test.columns if f not in l_roll_feats]
         train_test = train_test[feats]
@@ -499,8 +542,8 @@ if __name__ == "__main__":
 
         xgbtrain = xgb.DMatrix(train_feat_1[predictors], train_feat_1['saleCount'])
         xgbvalid = xgb.DMatrix(test_feat_1[predictors])
-        # if i%7 == 0 :
-        # model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
+        if i%7 == 0 :
+          model = xgb.train(params, xgbtrain, num_boost_round=boostRound)
         param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
         # print "Parameter score: "
         # print param_score
@@ -515,6 +558,7 @@ if __name__ == "__main__":
         # result['saleCount'][result['saleCount'] < 0] = 0
         # print result
         # score_i = score(test_valid_i['saleCount'],result_i['saleCount'])
+
         result = pd.concat([result, result_i], axis=0)
         # print result
         # print "the {}th day predictive score:{}".format(i + 1,score_i)
