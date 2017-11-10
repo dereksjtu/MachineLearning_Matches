@@ -1480,8 +1480,9 @@ def get_roll_oneday_feats(train_test):
 
     # 获取趋势残差
     # train_test.loc[:,'residual_14'] = train_test['last1d'] - train_test['trend_14']
-    train_test.loc[:,'residual_trend_30'] = train_test['last1d'] - train_test['trend_30']
     # train_test.loc[:,'residual_exp_14'] = train_test['last1d'] - train_test['expweighted_14_avg']
+
+    train_test.loc[:,'residual_trend_30'] = train_test['last1d'] - train_test['trend_30']
 
     return train_test
 
