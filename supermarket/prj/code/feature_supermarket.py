@@ -1331,6 +1331,7 @@ def get_roll_oneday_feats(train_test):
     coord.loc[:,'last4wTot'] = coord['last22d']+coord['last23d']+coord['last24d']+coord['last25d']+coord['last26d']+coord['last27d']+coord['last28d']
     coord.loc[:,'last4wMean'] = (coord['last22d']+coord['last23d']+coord['last24d']+coord['last25d']+coord['last26d']+coord['last27d']+coord['last28d'])/7
 
+<<<<<<< HEAD
     coord['last29d'] = coord.groupby('Class')['last28d'].shift(1)
     coord['last29d'].fillna(method='bfill',inplace=True)
     coord['last30d'] = coord.groupby('Class')['last29d'].shift(1)
@@ -1338,6 +1339,8 @@ def get_roll_oneday_feats(train_test):
     coord['last31d'] = coord.groupby('Class')['last30d'].shift(1)
     coord['last31d'].fillna(method='bfill',inplace=True)
 
+=======
+>>>>>>> 9542c1b58ee95f749df7f42e5d0d8f0c57386f34
 
     #dif天数
     # coord.loc[:,'diff2d'] = coord['last1d'] - coord['last3d']
@@ -1468,7 +1471,11 @@ def get_roll_oneday_feats(train_test):
     # coord.loc[:,'last21d_std'] = roll21_std['last21d_std']
     coord.loc[:,'last21d_median'] = roll21_median['last21d_median']
     # coord.loc[:,'last21d_max'] = roll21_max['last21d_max']
+<<<<<<< HEAD
     coord.loc[:,'last30d_mean'] = roll30_mean['last30d_mean']
+=======
+    # coord.loc[:,'last30d_mean'] = roll30_mean['last30d_mean']
+>>>>>>> 9542c1b58ee95f749df7f42e5d0d8f0c57386f34
     # coord.loc[:,'last30d_std'] = roll30_std['last30d_std']
     coord.loc[:,'last30d_median'] = roll30_median['last30d_median']
     # coord.loc[:,'last30d_max'] = roll30_max['last30d_max']
@@ -1486,6 +1493,7 @@ def get_roll_oneday_feats(train_test):
     coord.fillna(0,inplace=True)
     coord['daySale_pct'][np.isinf(coord['daySale_pct'])] = 0
 
+<<<<<<< HEAD
     coord.loc[:,'last1dOn7'] = (coord['last1d'] - coord['last8d'])
     coord.loc[:,'last1dOn14'] = (coord['last1d'] - coord['last15d'])
     coord.loc[:,'last1dOn21'] = (coord['last1d'] - coord['last22d'])
@@ -1498,6 +1506,16 @@ def get_roll_oneday_feats(train_test):
     # del coord['last1d']
     del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last7d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d'],coord['last14d']
     del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last21d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d'],coord['last28d'],coord['last29d'],coord['last30d'],coord['last31d']
+=======
+    # coord.loc[:,'last1dTo1wRate'] = coord['last1d'] / (1.0 * coord['last1wTot'] + 0.1)
+    # coord.loc[:,'last2dTo2wRate'] = (coord['last1d'] + coord['last2d']) / (1.0 * (coord['last1wTot'] + coord['last2wTot']) + 0.1)
+    # coord.loc[:,'last3dTo3wRate'] = (coord['last1d'] + coord['last2d'] + coord['last3d']) / (1.0 * (coord['last1wTot'] + coord['last2wTot'] + coord['last3wTot']) + 0.1)
+    # coord.loc[:,'last4dTo4wRate'] = (coord['last1d'] + coord['last2d'] + coord['last3d'] + coord['last4d']) / (1.0 * (coord['last1wTot'] + coord['last2wTot'] + coord['last3wTot'] + coord['last4wTot']) + 0.1)
+
+    # del coord['last1d']
+    del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last7d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d'],coord['last14d']
+    del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last21d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d'],coord['last28d']
+>>>>>>> 9542c1b58ee95f749df7f42e5d0d8f0c57386f34
     # del coord['last2d'],coord['last3d'],coord['last4d'],coord['last5d'],coord['last6d'],coord['last8d'],coord['last9d'],coord['last10d'],coord['last11d'],coord['last12d'],coord['last13d']
     # del coord['last15d'],coord['last16d'],coord['last17d'],coord['last18d'],coord['last19d'],coord['last20d'],coord['last22d'],coord['last23d'],coord['last24d'],coord['last25d'],coord['last26d'],coord['last27d']
     del coord['last4wTot'],coord['last3wTot'],coord['last2wTot'],coord['last1wTot'],coord['diff2w'],coord['diff3w'],coord['diff4w']
@@ -1512,6 +1530,7 @@ def get_roll_oneday_feats(train_test):
 
     train_test.loc[:,'residual_trend_30'] = train_test['last1d'] - train_test['trend_30']
 
+<<<<<<< HEAD
     return train_test
 
 def get_roll_hol_feats(train_test):
@@ -1537,6 +1556,33 @@ def get_roll_hol_feats(train_test):
 
     return train_test
 
+=======
+    return train_test
+
+def get_roll_hol_feats(train_test):
+    coord =train_test.groupby(['Class','dayOfYear'],as_index=False)['disHoliday_detail'].agg({'disHolidayLast1d_detail':'mean'})
+    coord['disHolidayLast1d_detail'] = coord.groupby('Class')['disHolidayLast1d_detail'].shift(1)
+    coord['disHolidayLast1d_detail'].fillna(0,inplace=True)
+    train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
+    coord =train_test.groupby(['Class','disHolidayLast1d_detail'],as_index=False)['residual_trend_30'].agg({'residual_hol_last1d_30':'mean'})
+    train_test = pd.merge(train_test,coord,on=['Class','disHolidayLast1d_detail'],how='left')
+
+    coord =train_test.groupby(['Class','dayOfYear'],as_index=False)['disWorkday_detail'].agg({'disWorkdayLast1d_detail':'mean'})
+    coord['disWorkdayLast1d_detail'] = coord.groupby('Class')['disWorkdayLast1d_detail'].shift(1)
+    coord['disWorkdayLast1d_detail'].fillna(0,inplace=True)
+    train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
+    coord =train_test.groupby(['Class','disWorkdayLast1d_detail'],as_index=False)['residual_trend_30'].agg({'residual_wk_last1d_30':'mean'})
+    train_test = pd.merge(train_test,coord,on=['Class','disWorkdayLast1d_detail'],how='left')
+
+    coord =train_test.groupby(['Class','dayOfYear'],as_index=False)['disholDaySaleCount_mean'].agg({'disholDayLast1dSaleCount_mean':'mean'})
+    coord['disholDayLast1dSaleCount_mean'] = coord.groupby('Class')['disholDayLast1dSaleCount_mean'].shift(1)
+    coord['disholDayLast1dSaleCount_mean'].fillna(0,inplace=True)
+    train_test = pd.merge(train_test,coord,on=['Class','dayOfYear'],how='left')
+
+
+    return train_test
+
+>>>>>>> 9542c1b58ee95f749df7f42e5d0d8f0c57386f34
 
 def get_roll_feats(train_test):
     l_feat_original = train_test.columns
