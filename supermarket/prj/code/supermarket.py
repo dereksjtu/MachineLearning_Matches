@@ -256,16 +256,10 @@ if __name__ == "__main__":
 #                                # 'Class',
 #                                'last3wTot','last4wTot','last2wTot','last1wTot',
 #                                'last21d','last28d','last7d','last14d',
-<<<<<<< HEAD
 #                                # 'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
 #                                # 'last1d',
 #                                'last1wMean','last2wMean','last3wMean','last4wMean',
 #                                'last7d_mean','last7d_median','last14d_mean','last14d_median','last21d_mean','last21d_median','last30d_median'
-=======
-#                                'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
-#                                'last1d',
-#                                'last1wMean','last2wMean','last3wMean','last4wMean'
->>>>>>> 9542c1b58ee95f749df7f42e5d0d8f0c57386f34
 #                                # 'diff_2',
 #                                # 'parClass',
 #                                # 'holDaySaleCount_min',
@@ -463,11 +457,7 @@ if __name__ == "__main__":
                                'last3wTot','last4wTot','last2wTot','last1wTot',
                                'last21d','last28d','last7d','last14d',
                                'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
-<<<<<<< HEAD
                                # 'last1d',
-=======
-                               'last1d',
->>>>>>> 9542c1b58ee95f749df7f42e5d0d8f0c57386f34
                                'last1wMean','last2wMean','last3wMean','last4wMean'
                                # 'diff_2',
                                # 'parClass',
