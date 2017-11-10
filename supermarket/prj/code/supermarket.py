@@ -258,6 +258,7 @@ if __name__ == "__main__":
 #                                'last21d','last28d','last7d','last14d',
 #                                'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
 #                                'last1d',
+#                                'last1wMean','last2wMean','last3wMean','last4wMean'
 #                                # 'diff_2',
 #                                # 'parClass',
 #                                # 'holDaySaleCount_min',
@@ -399,7 +400,7 @@ if __name__ == "__main__":
     test_o.loc[:,'saleCount'] = 0
 
     train_start = '2015-01-01'
-    train_end = '2015-04-29'
+    train_end = '2015-04-28'
 
     # 特征1： 提取固定特征
     train, train_new, test = get_origin_feats(train_o, train_new_o, test_o)
@@ -456,6 +457,7 @@ if __name__ == "__main__":
                                'last21d','last28d','last7d','last14d',
                                'last7d_mean','last21d_mean','last14d_mean','last30d_mean',
                                'last1d',
+                               'last1wMean','last2wMean','last3wMean','last4wMean'
                                # 'diff_2',
                                # 'parClass',
                                # 'holDaySaleCount_min',
@@ -479,6 +481,7 @@ if __name__ == "__main__":
     param_score = pd.Series(model.get_fscore()).sort_values(ascending=False)
     print "Parameter score: "
     print param_score, len(predictors)
+    param_score.to_csv('param_score_train.csv')
     test_feat_1.loc[:,'saleCount'] = model.predict(xgbvalid)
     result = test_feat_1[['Class','SaleDate','saleCount']]
     test_valid_1 = test[test['SaleDate'].isin(week_5[0])]
