@@ -20,6 +20,9 @@ train_path = '../input/train.csv'
 test_path = '../input/test.csv'
 hol_path = '../input/holiday.csv'
 train_date_path = '../input/train_date.csv'
+train_coupon_path = '../input/train_new_coupon.csv'
+coupon_May_pre_path = '../input/train_coupon_reshape_May_pre.csv'
+coupon_Apri_pre_path = '../input/train_coupon_reshape_Apri_pre.csv'
 cache_path = '../input/cache/'
 output_path = '../output/'
 
@@ -131,48 +134,151 @@ if __name__ == "__main__":
     # do_not_use_class = [1516,3005,3424]
     # do_not_use_class = [1507]
     # perform extreamly bad
-    do_not_use_class = [
-# 11,
-# 3013,
-# 1308,
-# 2207,
-# 3018,
-# 2013,
-# 31,
-# 1202,
-# 2210,
-# 1521,
-# 2008,
-# 2205,
-# 2014,
-# 2204,
-# 1001,
-# 2206,
-# 13,
-# 10,
-# 3016,
-# 1518,
-# 2011,
-# 2202,
-# 1505,
-# 2203,
-# 2201,
-# 23,
-# 30,
-# 1203,
-15,
+#     do_not_use_class = [
+# # 11,
+# # 3013,
+# # 1308,
+# # 2207,
+# # 3018,
+# # 2013,
+# # 31,
+# # 1202,
+# # 2210,
+# # 1521,
+# # 2008,
+# # 2205,
+# # 2014,
+# # 2204,
+# # 1001,
+# # 2206,
+# # 13,
+# # 10,
+# # 3016,
+# # 1518,
+# # 2011,
+# # 2202,
+# # 1505,
+# # 2203,
+# # 2201,
+# # 23,
+# # 30,
+# # 1203,
+# 15,
+# 20,
+# # 1201,
+# 22,
+# 12
+# ]
+    coupon_class = [15,
 20,
-# 1201,
+21,
 22,
-12
-]
+23,
+30,
+31,
+32,
+33,
+34,
+1501,
+1502,
+1503,
+1505,
+1508,
+1510,
+1512,
+1513,
+1515,
+1517,
+1518,
+1519,
+1521,
+2001,
+2002,
+2003,
+2005,
+2006,
+2007,
+2008,
+2009,
+2010,
+2011,
+2012,
+2013,
+2014,
+2015,
+2101,
+2103,
+2104,
+2105,
+2106,
+2107,
+2201,
+2202,
+2203,
+2204,
+2205,
+2206,
+2207,
+2208,
+2209,
+2210,
+2211,
+2212,
+2301,
+2302,
+2303,
+2304,
+2305,
+2306,
+2307,
+2309,
+2310,
+2311,
+2314,
+2317,
+3001,
+3002,
+3003,
+3004,
+3006,
+3007,
+3008,
+3010,
+3011,
+3013,
+3016,
+3018,
+3107,
+3109,
+3110,
+3112,
+3113,
+3114,
+3116,
+3117,
+3118,
+3119,
+3126,
+3319,
+3320,
+3402,
+3403,
+3407,
+3408,
+3415,
+3423,
+3424,
+3426,
+3431]
 
 #     t0 = time.time()
 #     train_o = pd.read_csv(train_path,encoding='gbk',engine='python')
 #     test_o = pd.read_csv(test_path)
 #     train_o,train_new_o = reshape_train(train_o)
+#
+#
 #     # 验证集中不预测的类
-#     # train_o, train_new_o = exclude_class(train_new_o, train_o, do_not_use_class)
+#     train_o, train_new_o = exclude_class(train_new_o, train_o, coupon_class)
 #
 #
 #
@@ -180,12 +286,31 @@ if __name__ == "__main__":
 #     train ,train_new, test = train_test_split(train_o,train_new_o)
 #     test.loc[:,'saleCount'] = 0
 #
+#
+#
 #     # 特征1： 提取固定特征
-#     train_new = exclude_abnormal_value(train_new)
+#     # train_new = exclude_abnormal_value(train_new)
+#     train_new = exclude_abnormal_value_coupon(train_new)
 #     print 'Filter abnormal value.'
 #     train_new_o.SaleDate = train_new_o.SaleDate.map(lambda x: timeHandle(x))
 #     train_new_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
 #     train, train_new, test = get_origin_feats(train, train_new, test)
+#     # 提取四月前的Coupon特征
+#     del train_new['Coupon']
+#     train_coupon = pd.read_csv(train_coupon_path)
+#     train_coupon['SaleDate'] = pd.to_datetime(train_coupon['SaleDate'])
+#     train_new = pd.merge(train_new,train_coupon[['Class','SaleDate','Coupon']],on=['Class','SaleDate'],how='left')
+#     train_new['Coupon'].fillna(0,inplace=True)
+#     print train_new['Coupon'].unique()
+#     # 提取四月前的Coupon特征
+#     #将预测的4月的Coupon特征合并到4月验证集中
+#     del test['Coupon']
+#     test_coupon = pd.read_csv(coupon_Apri_pre_path)
+#     test_coupon['SaleDate'] = pd.to_datetime(test_coupon['SaleDate'])
+#     test = pd.merge(test,test_coupon[['Class','SaleDate','Coupon']],on=['Class','SaleDate'],how='left')
+#     test['Coupon'].fillna(0,inplace=True)
+#     print test['Coupon'].unique()
+#     #将预测的4月的Coupon特征合并到4月验证集中
 #
 #     #训练日期
 #     start_date = '2015-01-01'
@@ -230,7 +355,8 @@ if __name__ == "__main__":
 #     test_feat_1.fillna(0,inplace=True)
 #     test_feat_1.loc[:,'saleCount'] = 0
 #     feature_names = list(train_feat_1.columns)
-#     do_not_use_for_training = ['SaleDate','saleCount','Coupon',
+#     do_not_use_for_training = ['SaleDate','saleCount',
+#                                # 'Coupon',
 #                                'dayOfYear','price_mean','price_median',
 #                                # 'parCumtype','parClass',
 #                                # 'parHotPast1MonthIndex',
@@ -362,13 +488,20 @@ if __name__ == "__main__":
 #
 # result = pd.merge(test_valid[['Class','SaleDate']], result, on=['Class','SaleDate'], how='left')
 # result['saleCount'][result['saleCount'] < 0] = 0
-# result.to_csv('result.csv',index=False)
-# test_valid.to_csv('test_valid.csv',index=False)
+# result.to_csv('result_coupon.csv',index=False)
+# test_valid.to_csv('test_valid_coupon.csv',index=False)
 # score_f = score(test_valid['saleCount'],result['saleCount'])
+#
+# # test_valid_coupon = pd.read_csv('test_valid_coupon.csv')
+# # test_valid_nocoupon = pd.read_csv('test_valid_nocoupon.csv')
+# # result_coupon = pd.read_csv('result_coupon.csv')
+# # result_nocoupon = pd.read_csv('result_nocoupon.csv')
+# # test_valid = pd.concat([test_valid_coupon,test_valid_nocoupon],axis=0)
+# # result = pd.concat([result_coupon,result_nocoupon],axis=0)
+# # score_f = score(test_valid['saleCount'],result['saleCount'])
 #
 # print "Elapse time is {} minutes".format((time.time() - t0) / (1.0 * 60))
 # print "Total predictive score:{}".format(score_f)
-#
 #
 # # for further analyse
 # l_index = []
@@ -391,7 +524,7 @@ if __name__ == "__main__":
     train_o = pd.read_csv(train_path,encoding='gbk',engine='python')
     test_o = pd.read_csv(test_path)
     train_o,train_new_o = reshape_train(train_o)
-    # test_o, train_new_o = exclude_class(train_new_o, test_o, do_not_use_class)
+    test_o, train_new_o = exclude_class(train_new_o, test_o, coupon_class)
 
     # train_new_o.SaleDate = train_new_o.SaleDate.map(lambda x: timeHandle(x))
     # train_new_o.SaleDate = pd.to_datetime(train_new_o.SaleDate)
@@ -406,7 +539,24 @@ if __name__ == "__main__":
     # 特征1： 提取固定特征
     train, train_new, test = get_origin_feats(train_o, train_new_o, test_o)
     train_new = exclude_abnormal_value(train_new)
+    # train_new = exclude_abnormal_value_coupon(train_new)
     print 'Filter abnormal value.'
+    # # 提取五月前的Coupon特征
+    # del train_new['Coupon']
+    # train_coupon = pd.read_csv(train_coupon_path)
+    # train_coupon['SaleDate'] = pd.to_datetime(train_coupon['SaleDate'])
+    # train_new = pd.merge(train_new,train_coupon[['Class','SaleDate','Coupon']],on=['Class','SaleDate'],how='left')
+    # train_new['Coupon'].fillna(0,inplace=True)
+    # print train_new['Coupon'].unique()
+    # # 提取五月前的Coupon特征
+    # #将预测的5月预测的Coupon特征合并到5月测试集中
+    # # del test['Coupon']
+    # test_coupon = pd.read_csv(coupon_May_pre_path)
+    # test_coupon['SaleDate'] = pd.to_datetime(test_coupon['SaleDate'])
+    # test = pd.merge(test,test_coupon[['Class','SaleDate','Coupon']],on=['Class','SaleDate'],how='left')
+    # test['Coupon'].fillna(0,inplace=True)
+    # print test['Coupon'].unique()
+    # #将预测的5月预测的Coupon特征合并到5月测试集中
 
 
     test_5 = test[test['SaleDate'].isin(week_5[0])]
@@ -430,7 +580,8 @@ if __name__ == "__main__":
     test_feat_1.fillna(0,inplace=True)
     test_feat_1.loc[:,'saleCount'] = 0
     feature_names = list(train_feat_1.columns)
-    do_not_use_for_training = ['SaleDate','saleCount','Coupon',
+    do_not_use_for_training = ['SaleDate','saleCount',
+                               'Coupon',
                                'dayOfYear','price_mean','price_median',
                                # 'parCumtype','parClass',
                                # 'parHotPast1MonthIndex',
@@ -569,9 +720,9 @@ result['saleCount'][result['saleCount'] < 0] = 0
 result['saleCount'] = result['saleCount'].astype('int')
 result['Class'] = result['Class'].astype('int')
 result['SaleDate'] = test_o['SaleDate']
-result.to_csv('result.csv',index=False)
+result.to_csv('result_sub_nocoupoon.csv',index=False)
 result.rename(columns={'Class':u'编码','saleCount':u'销量','SaleDate':u'日期'},inplace=True)
-result.to_csv('result.csv',index=False,encoding='gbk')
+result.to_csv('result_sub_nocoupoon.csv',index=False,encoding='gbk')
 # test_valid.to_csv('test_valid.csv',index=False)
 # score = score(test_valid['saleCount'],result['saleCount'])
 print "Elapse time is {} minutes".format((time.time() - t0) / (1.0 * 60))
