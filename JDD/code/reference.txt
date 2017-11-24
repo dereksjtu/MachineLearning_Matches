@@ -1,0 +1,11 @@
+https://github.com/hczheng/Rong360
+https://statcompute.wordpress.com/2012/12/08/monotonic-binning-with-python/
+http://blog.csdn.net/mr_tyting/article/details/75212250
+http://blog.csdn.net/mr_tyting/article/details/77371157#comments
+http://blog.csdn.net/mr_tyting/article/details/75097681#comments
+http://blog.csdn.net/Mr_tyting/article/category/7015746
+http://blog.csdn.net/Mr_tyting/article/details/75878638
+http://blog.csdn.net/sinat_26917383/article/details/51721107
+http://blog.csdn.net/sinat_26917383/article/details/51604682
+http://blog.csdn.net/sscc_learning/article/details/78591210
+http://www.dataguru.cn/article-10478-1.html
